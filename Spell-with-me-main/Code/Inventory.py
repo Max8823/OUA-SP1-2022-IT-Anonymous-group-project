@@ -132,7 +132,9 @@ class Inventory:
         target_item = target
 
     def get_target_item(self):
-        return self.target_item
+        global target_item
+
+        return target_item
 
     # change the + and - values to change their positioning when real graphics come in
     # drawing the additional item info screen

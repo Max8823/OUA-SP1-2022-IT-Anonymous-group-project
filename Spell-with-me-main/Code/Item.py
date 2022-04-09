@@ -125,3 +125,6 @@ class Item:
 
     def set_item_pos(self, pos):
         self.pos = pos
+
+    def get_item_rect(self):
+        return self.rect

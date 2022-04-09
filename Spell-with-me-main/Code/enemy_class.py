@@ -1,36 +1,118 @@
-class Enemy:
-    player_spells = {
-        "Inferno": 1,
-        "Mind Control": 2,
-        "Dark Mist": 2,
-        "Terrify": 2
-    }
+import pygame
+import random
 
-    def __init__(self, name, health, spell):
-        self.__name = name
-        self.__health = health
-        self.__spell = self.player_spells[spell]
 
-    @property
-    def name(self):
-        return self.__name
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, enemy_code, groups, obstacle_sprites):
+        super().__init__(groups)
 
-    @name.setter
-    def name(self, value):
-        self.__name = value
+        self.enemy_level = 1
+        self.qty =0
+        self.item_code =0
 
-    @property
-    def health(self):
-        return self.__health
+        ##################################################################################
+        # need to change these values later once we have enemies done
+        #atm each enemy would drop 2 items, add to dict to increase count,
 
-    @health.setter
-    def health(self, value):
-        self.__health = value
 
-    @property
-    def spell(self):
-        return self.__spell
 
-    @spell.setter
-    def spell(self, value):
-        self.__spell = self.player_spells[value]
+        if enemy_code == 0:
+            self.enemy_name = "enemy5"
+            self.enemy_health = 4
+            self.enemy_img = '..path to img'
+            # add rect here later
+
+            self.enemy_spells = {
+                "Inferno": 1,
+                "Mind Control": 2,
+                "Dark Mist": 2,
+                "Terrify": 2
+            }
+
+            self.enemy_loot = {"item_code": self.get_item_code(),  "qty": self.get_qty(0, 2),
+                               "item_code": 0, "qty": 1}
+
+
+
+        elif enemy_code == 1:
+            self.enemy_name = "enemy5"
+            self.enemy_health = 4
+            self.enemy_img = '..path to img'
+            # add rect here later
+
+            self.enemy_spells = {
+                "Inferno": 1,
+                "Mind Control": 2,
+                "Dark Mist": 2,
+                "Terrify": 2
+            }
+            self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(0, 2),
+                               "item_code": 0, "qty": 1}
+
+        elif enemy_code == 2:
+            self.enemy_name = "enemy5"
+            self.enemy_health = 4
+            self.enemy_img = '..path to img'
+            # add rect here later
+
+            self.enemy_spells = {
+                "Inferno": 1,
+                "Mind Control": 2,
+                "Dark Mist": 2,
+                "Terrify": 2
+            }
+            self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(0, 2),
+                               "item_code": 0, "qty": 1}
+
+        elif enemy_code == 4:
+            self.enemy_name = "enemy5"
+            self.enemy_health = 4
+            self.enemy_img = '..path to img'
+            # add rect here later
+
+            self.enemy_spells = {
+                "Inferno": 1,
+                "Mind Control": 2,
+                "Dark Mist": 2,
+                "Terrify": 2
+            }
+
+            self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(0, 2),
+                               "item_code": 0, "qty": 1}
+
+        else:
+            self.enemy_name = "enemy5"
+            self.enemy_health = 4
+            self.enemy_img = '..path to img'
+            # add rect here later
+
+            self.enemy_spells = {
+                "Inferno": 1,
+                "Mind Control": 2,
+                "Dark Mist": 2,
+                "Terrify": 2
+            }
+
+            self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(0, 2),
+                               "item_code": 0, "qty": 1}
+
+    def get_item_code(self):
+        item_code = random.randrange(0, 9)
+        return item_code
+
+    def get_qty(self, r1, r2):
+        qty = random.randrange(r1, r2)
+        return qty
+
+    def get_enemy_name(self):
+        return self.enemy_name
+
+    def get_enemy_health(self):
+        return self.health
+
+    def set_enemy_health(self, value):
+        self.health = value
+
+    def enemy_cast_spell(self, spell):
+
+        return self.enemy_spells[spell]

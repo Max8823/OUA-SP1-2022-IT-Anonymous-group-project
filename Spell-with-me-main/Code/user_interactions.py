@@ -22,17 +22,19 @@ class user_interactions():
         self.item_display_up = False
         self.inventory_open = False
 
-
-        # referencing level,
+# referencing level,
         self.level = level.Level
 
+# used to pull chests into this class, preventing circular import
     def set_chest_list(self, chests):
         for chest in chests:
             self.chests.append(chest)
 
+# used to load player into this class, preventing circular import
     def set_player(self, player):
         self.player = player
 
+#used to pull items list from inventory when a change occurs back there
     def set_items(self, items_list):
         self.items_list = list()
 
@@ -52,6 +54,12 @@ class user_interactions():
         self.camera.set_item_info_status(status)
 
     def key_pressed(self, key):
+
+
+        if key[pygame.K_p]:
+            print(self.player.get_spell()["Fire Blast"]["damage"])
+
+
 
         # open invenventory
         if not self.inventory_open:
@@ -129,22 +137,23 @@ class user_interactions():
 
         if self.inventory_open and self.item_display_up:
 
-#if clicked on cancel, close item display, from Camera and the tracker here
+            # if clicked on cancel, close item display, from Camera and the tracker here
             if self.Inventory.get_cancel_pos().collidepoint(mouse_pos):
                 self.item_display_up = False
                 self.camera.set_item_info_status(False)
 
-#if clicked on equip - run equipping method/s
+            # if clicked on equip - run equipping method/s
             if self.Inventory.get_second_button() == 1:
                 if self.Inventory.get_display_equip_pos().collidepoint(mouse_pos):
                     print("equipping item calling goes here")
 
-#if clicked on 'use item' run use item method/s
+            # if clicked on 'use item' run use item method/s
             elif self.Inventory.get_second_button() == 2:
                 if self.Inventory.get_display_use_item_pos().collidepoint(mouse_pos):
                     print("use item calling goes here")
 
     def check_mouse_click_right(self, mouse_pos):
+
         if self.inventory_open and not self.item_display_up:
             self.get_item_display(mouse_pos)
 
@@ -153,23 +162,21 @@ class user_interactions():
 
         for items in self.items_list:
 
-            for items in self.items_list:
+            self.items_list[i].get_item_pos()
 
-                self.items_list[i].get_item_pos()
+            item_pos_x = self.items_list[i].get_item_pos()[0]
+            item_pos_y = self.items_list[i].get_item_pos()[1]
 
-                item_pos_x = self.items_list[i].get_item_pos()[0]
-                item_pos_y = self.items_list[i].get_item_pos()[1]
+            if abs((((((item_pos_x + 55) - item_pos_x) / 2) + item_pos_x) - mouse_pos[0])) <= 30 and abs(
+                    (((((item_pos_y + 55) - item_pos_y) / 2) + item_pos_y) - mouse_pos[1])) <= 30:
 
-                if abs((((((item_pos_x + 55) - item_pos_x) / 2) + item_pos_x) - mouse_pos[0])) <= 30 and abs(
-                        (((((item_pos_y + 55) - item_pos_y) / 2) + item_pos_y) - mouse_pos[1])) <= 30:
+                self.Inventory.set_target_item(i)
+                self.Inventory.draw_item_info()
+                self.item_display_up = True
+                self.set_item_info(True)
 
-                    self.Inventory.set_target_item(i)
-                    self.Inventory.draw_item_info()
-                    self.item_display_up = True
-                    self.set_item_info(True)
-
-                else:
-                    i += 1
+            else:
+                i += 1
 
     # checking all the chests on the current map
     def check_chests(self, mouse_pos):
@@ -183,10 +190,8 @@ class user_interactions():
                 if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
                                     sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))),
                                    self.chests[i].get_chest_pos())) <= 64:
-
                     self.Inventory.add_item(self.chests[i].get_chest_contents()[0],
                                             self.chests[i].get_chest_contents()[1])
-
 
                     self.set_items(self.Inventory.get_items_list())
 

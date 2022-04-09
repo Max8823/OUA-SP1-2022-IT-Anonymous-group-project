@@ -33,6 +33,22 @@ class Player(pygame.sprite.Sprite):
 
         self.player_health = 3
 
+        self.player_spells = {
+            "Fire Blast":{"damage": 1, "learnt": True, "img":  '..'},
+            "Water Blast":{"damage": 1, "learnt": True, "img":  '..'},
+            "Earth Blast":{"damage": 1, "learnt": True, "img":  '..'},
+            "Air Blast":{"damage": 1, "learnt": True, "img":  '..'},
+            "Fire Fury":{"damage": 3, "learnt": False, "img":  '..'},
+            "Water Fury":{"damage": 3, "learnt": False, "img":  '..'},
+            "Earth Fury":{"damage": 3, "learnt": False, "img":  '..'},
+            "Air Fury":{"damage": 3, "learnt": False, "img":  '..'},
+    }
+
+
+    def get_spell(self):
+
+
+        return self.player_spells
 
 
     def get_player_pos(self):

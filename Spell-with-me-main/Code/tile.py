@@ -18,6 +18,7 @@ class Tile(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center=pos)
             self.hitbox = self.rect.inflate(-20, -20)
 
+#this would be used if a specific chest with specific items would exist
         if sprite_type == 'chest_e':
             self.image = pygame.image.load('../graphics/objects/chests/empty_chest.png').convert_alpha()
             self.rect = self.image.get_rect(center=pos)

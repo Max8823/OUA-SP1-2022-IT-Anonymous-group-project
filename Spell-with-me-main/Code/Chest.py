@@ -22,9 +22,9 @@ class Chest:
     def get_chest_contents(self):
         return self.contents
 
+#this is temporary
     def generate_contents(self):
         item_code = random.randrange(0, 9)
         qty = random.randrange(1, 5)
-
 
         return item_code, qty
