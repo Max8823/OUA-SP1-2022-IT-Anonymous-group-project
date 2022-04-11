@@ -9,7 +9,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, groups, obstacle_sprites):
         super().__init__(groups)
 
-        self.image = pygame.image.load('../graphics/player/player_down.png').convert_alpha()
+        self.image = pygame.image.load('../graphics/player/down/down0.png').convert_alpha()
 
         # do not change
         self.rect = self.image.get_rect(center=(x, y))
@@ -31,7 +31,8 @@ class Player(pygame.sprite.Sprite):
         # will be used when starting battle
         self.inBattle = False
 
-        self.player_health = 3
+        self.player_base_health = 3
+        self.load_player_animations()
 
         self.player_spells = {
             "Fire Blast":{"damage": 1, "learnt": True, "img":  '..'},
@@ -45,9 +46,57 @@ class Player(pygame.sprite.Sprite):
     }
 
 
+    def load_player_animations(self):
+        animation_path = '../graphics/player/'
+        self.player_animations = {'down': [], 'left': [], 'right': [], 'up': [], 'down_standing': [],
+                                  'left_standing': [], 'right_standing': [], 'up_standing': []}
+
+        for animation in self.player_animations.keys():
+            img_path = animation_path + animation
+            self.player_animations[animation] = self.load_animations(img_path)
+
+    def animate(self):
+
+        animation = self.player_animations[self.facing]
+        self.frame_index += self.animation_speed
+
+
+        if self.frame_index >= len(animation):
+            self.frame_index = 0
+        self.image = animation[int(self.frame_index)]
+        self.rect = self.image.get_rect(center=self.hitbox.center)
+
+
+
+    def load_animations(self, path):
+
+        animations = []
+        for _, __, img_files in walk(path):
+            for image in img_files:
+                full_path = path + '/' + image
+
+                next_animation = pygame.image.load(full_path).convert_alpha()
+
+                animations.append(next_animation)
+
+        return animations
+
+    def set_player_facing(self, facing):
+
+        self.facing = facing
+
+
+
+
+    def get_player_facing(self):
+        if self.direction.x == 0 and self.direction.y ==0:
+            if not 'standing' in self.facing and not self.inBattle:
+                self.facing = self.facing + '_standing'
+
+
+
+
     def get_spell(self):
-
-
         return self.player_spells
 
 
@@ -109,5 +158,7 @@ class Player(pygame.sprite.Sprite):
                         self.hitbox.top = sprite.hitbox.bottom
 
     # updating user input
-
+    def update(self):
+        self.get_player_facing()
+        self.animate()
 
