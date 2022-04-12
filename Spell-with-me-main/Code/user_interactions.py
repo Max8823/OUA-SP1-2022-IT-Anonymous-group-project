@@ -56,10 +56,6 @@ class user_interactions():
     def key_pressed(self, key):
 
 
-        if key[pygame.K_p]:
-            print(self.player.get_spell()["Fire Blast"]["damage"])
-
-
 
         # open invenventory
         if not self.inventory_open:

@@ -31,56 +31,53 @@ class Player(pygame.sprite.Sprite):
         # will be used when starting battle
         self.inBattle = False
 
-        self.player_base_health = 3
         self.load_player_animations()
 
         self.player_spells = {
-            "Fire Blast":{"damage": 100, "learnt": True, "img":  '..'},
-            "Water Blast":{"damage": 100, "learnt": True, "img":  '..'},
-            "Earth Blast":{"damage": 100, "learnt": True, "img":  '..'},
-            "Air Blast":{"damage": 100, "learnt": True, "img":  '..'},
-            "Fire Fury":{"damage": 300, "learnt": False, "img":  '..'},
-            "Water Fury":{"damage": 300, "learnt": False, "img":  '..'},
-            "Earth Fury":{"damage": 300, "learnt": False, "img":  '..'},
-            "Air Fury":{"damage": 300, "learnt": False, "img":  '..'},
+            "Fire Blast": {"spell_id": 0,"damage": 100, "learnt": True, "img": '..'},
+            "Water Blast": {"spell_id": 1,"damage": 100, "learnt": True, "img": '..'},
+            "Earth Blast": {"spell_id": 2,"damage": 100, "learnt": True, "img": '..'},
+            "Air Blast": {"spell_id": 3,"damage": 100, "learnt": True, "img": '..'},
+            "Fire Fury": {"spell_id": 4,"damage": 300, "learnt": False, "img": '..'},
+            "Water Fury": {"spell_id": 5,"damage": 300, "learnt": False, "img": '..'},
+            "Earth Fury": {"spell_id": 6,"damage": 300, "learnt": False, "img": '..'},
+            "Air Fury": {"spell_id": 7,"damage": 300, "learnt": False, "img": '..'},
         }
-
-
-        self.player_base_health = 300
+        ##
         self.player_current_health = 300
-        self.max_health = 1000
+        self.player_max_health = 1000
         self.health_bar_length = 400
-        self.health_ratio = self.max_health/self.health_bar_length
         self.target_health = 500
-        self.change_speed = 4
+        self.health_ratio = self.player_max_health / self.health_bar_length
+        self.change_speed = 1
 
-    def take_player_health(self, damage):
-        self.player_current_health -= damage
-
-    def plus_player_health(self, heal):
-        self.player_current_health += heal
-
-    def draw_health_bar(self):
+    def draw_player_health(self):
         transition_width = 0
-        transition_color = (255,0,0)
+        transition_color = (255, 0, 0)
+
         if self.player_current_health < self.target_health:
             self.player_current_health += self.change_speed
-            int(self.target_health - self.player_current_health/self.health_ratio)
+            transition_width = int((self.target_health - self.player_current_health) / self.health_ratio)
             transition_color = (0, 255, 0)
 
         if self.player_current_health > self.target_health:
-            self.player_current_health += self.change_speed
-            int(self.target_health - self.player_current_health/self.health_ratio)
-            transition_color = (255,0,0)
+            self.player_current_health -= self.change_speed
+            transition_width = int((self.target_health - self.player_current_health) / self.health_ratio)
+            transition_color = (255, 255, 0)
 
-        health_bar_width = int(self.player_current_health/self.health_ratio)
-
+        health_bar_width = int(self.player_current_health / self.health_ratio)
         health_bar = pygame.Rect(10, 45, health_bar_width, 25)
         new_bar = pygame.Rect(health_bar.right, 45, transition_width, 25)
 
         pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), health_bar)
         pygame.draw.rect(pygame.display.get_surface(), transition_color, new_bar)
 
+
+    def set_player_health(self, damage):
+        self.player_current_health -= damage
+
+    def heal_player(self, healing):
+        self.player_current_health += healing
 
     def load_player_animations(self):
         animation_path = '../graphics/player/'
@@ -96,13 +93,10 @@ class Player(pygame.sprite.Sprite):
         animation = self.player_animations[self.facing]
         self.frame_index += self.animation_speed
 
-
         if self.frame_index >= len(animation):
             self.frame_index = 0
         self.image = animation[int(self.frame_index)]
         self.rect = self.image.get_rect(center=self.hitbox.center)
-
-
 
     def load_animations(self, path):
 
@@ -121,20 +115,13 @@ class Player(pygame.sprite.Sprite):
 
         self.facing = facing
 
-
-
-
     def get_player_facing(self):
-        if self.direction.x == 0 and self.direction.y ==0:
+        if self.direction.x == 0 and self.direction.y == 0:
             if not 'standing' in self.facing and not self.inBattle:
                 self.facing = self.facing + '_standing'
 
-
-
-
     def get_spell(self):
         return self.player_spells
-
 
     def get_player_pos(self):
         self.pos = self.rect.centerx, self.rect.centery
@@ -197,5 +184,4 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.get_player_facing()
         self.animate()
-        self.draw_health_bar()
-
+        self.draw_player_health()
