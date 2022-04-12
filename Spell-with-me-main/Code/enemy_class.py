@@ -71,10 +71,10 @@ class Enemy(pygame.sprite.Sprite):
             # add rect here later
 
             self.enemy_spells = {
-                "Inferno": 1,
-                "Mind Control": 2,
-                "Dark Mist": 2,
-                "Terrify": 2
+                "Inferno": {"spell_id": 0, "damage": 100, "img": '..'},
+                "Mind Control": {"spell_id": 1, "damage": 300, "img": '..'},
+                "Dark Mist": {"spell_id": 2, "damage": 300, "img": '..'},
+                "Terrify": {"spell_id": 1, "damage": 300, "img": '..'}
             }
 
             self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(0, 2),
