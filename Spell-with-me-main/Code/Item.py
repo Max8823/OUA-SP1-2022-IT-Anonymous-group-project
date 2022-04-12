@@ -94,7 +94,7 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/heart_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "HEALTH BOOST", "descrip": "Consume to increase maximum health \n by 1",
+            self.info = {"item_name": "HEALTH BOOST", "descrip": "Consume to increase maximum health by 100 \n by 1",
                          "equip": False, "consume": True, "img": self.image_large}
 
     def get_item_info(self):
@@ -104,7 +104,7 @@ class Item:
         return self.image
 
     def get_item_code(self):
-        print(self.item_code)
+
         return self.item_code
 
     def set_item_code(self, item_code):
@@ -115,10 +115,11 @@ class Item:
         self.item_count += qty
 
     def decrease_item_count(self,qty):
-        self.item_count += qty
+        self.item_count -= qty
 
     def get_item_count(self):
         return self.item_count
+
 
     def get_item_pos(self):
         return self.pos

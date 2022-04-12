@@ -27,4 +27,7 @@ class Chest:
         item_code = random.randrange(0, 9)
         qty = random.randrange(1, 5)
 
+        item_code = 0
+        qty = 1
+
         return item_code, qty

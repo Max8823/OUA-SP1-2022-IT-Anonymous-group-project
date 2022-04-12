@@ -34,6 +34,7 @@ class Player(pygame.sprite.Sprite):
         self.load_player_animations()
 
         self.player_spells = {
+
             "Fire Blast": {"spell_id": 0,"damage": 100, "learnt": True, "img": '..'},
             "Water Blast": {"spell_id": 1,"damage": 100, "learnt": True, "img": '..'},
             "Earth Blast": {"spell_id": 2,"damage": 100, "learnt": True, "img": '..'},
@@ -42,42 +43,42 @@ class Player(pygame.sprite.Sprite):
             "Water Fury": {"spell_id": 5,"damage": 300, "learnt": False, "img": '..'},
             "Earth Fury": {"spell_id": 6,"damage": 300, "learnt": False, "img": '..'},
             "Air Fury": {"spell_id": 7,"damage": 300, "learnt": False, "img": '..'},
+
         }
         ##
         self.player_current_health = 300
         self.player_max_health = 1000
         self.health_bar_length = 400
-        self.target_health = 500
+        self.player_target_health = 500
         self.health_ratio = self.player_max_health / self.health_bar_length
         self.change_speed = 1
 
+
     def draw_player_health(self):
-        transition_width = 0
-        transition_color = (255, 0, 0)
 
-        if self.player_current_health < self.target_health:
+        if self.player_current_health < self.player_target_health:
             self.player_current_health += self.change_speed
-            transition_width = int((self.target_health - self.player_current_health) / self.health_ratio)
-            transition_color = (0, 255, 0)
 
-        if self.player_current_health > self.target_health:
+        if self.player_current_health > self.player_target_health:
             self.player_current_health -= self.change_speed
-            transition_width = int((self.target_health - self.player_current_health) / self.health_ratio)
-            transition_color = (255, 255, 0)
 
         health_bar_width = int(self.player_current_health / self.health_ratio)
         health_bar = pygame.Rect(10, 45, health_bar_width, 25)
-        new_bar = pygame.Rect(health_bar.right, 45, transition_width, 25)
 
         pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), health_bar)
-        pygame.draw.rect(pygame.display.get_surface(), transition_color, new_bar)
 
 
     def set_player_health(self, damage):
         self.player_current_health -= damage
 
     def heal_player(self, healing):
-        self.player_current_health += healing
+
+        if self.player_current_health and self.player_target_health != self.player_max_health:
+            self.player_target_health += healing
+
+    def increase_max_health(self):
+            self.player_max_health += 100
+
 
     def load_player_animations(self):
         animation_path = '../graphics/player/'

@@ -19,22 +19,21 @@ class user_interactions():
         self.chests = []
         self.battle = False
         # track inventory open and item display open
-        self.item_display_up = False
         self.inventory_open = False
 
-# referencing level,
+        # referencing level,
         self.level = level.Level
 
-# used to pull chests into this class, preventing circular import
+    # used to pull chests into this class, preventing circular import
     def set_chest_list(self, chests):
         for chest in chests:
             self.chests.append(chest)
 
-# used to load player into this class, preventing circular import
+    # used to load player into this class, preventing circular import
     def set_player(self, player):
         self.player = player
 
-#used to pull items list from inventory when a change occurs back there
+    # used to pull items list from inventory when a change occurs back there
     def set_items(self, items_list):
         self.items_list = list()
 
@@ -55,8 +54,6 @@ class user_interactions():
 
     def key_pressed(self, key):
 
-
-
         # open invenventory
         if not self.inventory_open:
             if key[pygame.K_i]:
@@ -66,13 +63,14 @@ class user_interactions():
                 self.inventory_open = True
                 self.set_item_info(False)
 
+
         # this elif will close the item pop-up display if the user does not click on the 'X', requries both inventory and item display to be open
-        elif self.inventory_open and self.item_display_up:
+        elif self.inventory_open and self.Inventory.get_item_display_up():
             if key[pygame.K_i]:
                 self.clear_event()
                 self.wait()
                 self.set_item_info(False)
-                self.item_display_up = False
+                self.Inventory.set_item_display_up(False)
         # will close inventory, if open and item display is not
         else:
             if key[pygame.K_i]:
@@ -80,6 +78,7 @@ class user_interactions():
                 self.wait()
                 self.camera.set_inven_status(False)
                 self.inventory_open = False
+                self.Inventory.set_item_display_up(False)
                 self.set_item_info(False)
 
         # movement keys
@@ -131,11 +130,11 @@ class user_interactions():
                                self.get_offset()[1]
             self.check_chests(mouse_pos_actual)
 
-        if self.inventory_open and self.item_display_up:
+        if self.inventory_open and self.Inventory.get_item_display_up():
 
             # if clicked on cancel, close item display, from Camera and the tracker here
             if self.Inventory.get_cancel_pos().collidepoint(mouse_pos):
-                self.item_display_up = False
+                self.Inventory.set_item_display_up(False)
                 self.camera.set_item_info_status(False)
 
             # if clicked on equip - run equipping method/s
@@ -145,12 +144,23 @@ class user_interactions():
 
             # if clicked on 'use item' run use item method/s
             elif self.Inventory.get_second_button() == 2:
+
+                ############
                 if self.Inventory.get_display_use_item_pos().collidepoint(mouse_pos):
-                    print("use item calling goes here")
+
+                                ################ANGELLO##################################
+                  if self.items_list[self.Inventory.get_target_item()].get_item_code() ==0:
+                      self.player.heal_player(100)
+                      self.Inventory.consume_item()
+
+
+
+
+
 
     def check_mouse_click_right(self, mouse_pos):
 
-        if self.inventory_open and not self.item_display_up:
+        if self.inventory_open and not self.Inventory.get_item_display_up():
             self.get_item_display(mouse_pos)
 
     def get_item_display(self, mouse_pos):
@@ -168,7 +178,7 @@ class user_interactions():
 
                 self.Inventory.set_target_item(i)
                 self.Inventory.draw_item_info()
-                self.item_display_up = True
+                self.Inventory.set_item_display_up(True)
                 self.set_item_info(True)
 
             else:
@@ -196,7 +206,7 @@ class user_interactions():
             i += 1
 
     def wait(self):
-        pygame.time.wait(100)
+        pygame.time.wait(250)
 
     def clear_event(self):
         pygame.event.clear()
