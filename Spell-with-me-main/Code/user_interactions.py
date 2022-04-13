@@ -153,6 +153,23 @@ class user_interactions():
                       self.player.heal_player(100)
                       self.Inventory.consume_item()
 
+                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==8:
+                      self.player.increase_max_health()
+                      self.Inventory.consume_item()
+
+                  # updates spell damage
+                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==4:
+                       self.player.update_spell("Fire Fury", "True")
+
+                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==5:
+                       self.player.update_spell("Water Fury", "True")
+
+                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==6:
+                       self.player.update_spell("Earth Fury", "True")
+
+                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==7:
+                       self.player.update_spell("Air Fury", "True")
+
 
 
 

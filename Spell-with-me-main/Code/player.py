@@ -186,3 +186,7 @@ class Player(pygame.sprite.Sprite):
         self.get_player_facing()
         self.animate()
         self.draw_player_health()
+
+    # update spell through item
+    def update_spell(self, spell_name, value):
+        self.player_spells[spell_name]["learnt"] = value
