@@ -54,7 +54,7 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/book1_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "LIGHTNING BOLT", "descrip": "consume to learn lightning bolt", "equip": False,
+            self.info = {"item_name": "FIRE FURY", "descrip": "consume to learn Fire Fury", "equip": False,
                          "consume": True, "img": self.image_large}
 
 
@@ -64,7 +64,7 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/book2_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "ICE BLAST", "descrip": "consume to learn iceblast ", "equip": False,
+            self.info = {"item_name": "WATER FURY", "descrip": "consume to learn Water Fury ", "equip": False,
                          "consume": True, "img": self.image_large}
 
 
@@ -74,17 +74,18 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/book3_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "FIRE BALL", "descrip": "consume to learn fireball ", "equip": False,
+            self.info = {"item_name": "EARTH FURY", "descrip": "consume to learn Earth Fury ", "equip": False,
                          "consume": True, "img": self.image_large}
 
-
+        # previously known as sword, changed equip to false and consume to true
+        # also updated description.
         elif self.item_code == 7:
 
             self.image = pygame.image.load('../graphics/items/small/sword1.png').convert_alpha()
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/sword1_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "SWORD", "descrip": "its very sharp!", "equip": True, "consume": False,
+            self.info = {"item_name": "AIR FURY", "descrip": "consume to learn Air Fury", "equip": False, "consume": True,
                          "img": self.image_large}
 
 
