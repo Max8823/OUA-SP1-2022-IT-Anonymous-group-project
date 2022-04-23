@@ -2,6 +2,8 @@ import pygame
 import Inventory
 import player
 import enemy_class
+import level
+import config
 
 
 class battle:
@@ -30,4 +32,32 @@ class battle:
 
         print(self.player, self.enemy)
 
+question_list = ["Is the word 'whistel' spelt correctly?", "Is the word 'knife' spelt correctly?",
+                 "Is the word 'wriggle' spelt correctly?", "Is the word 'rong' spelt correctly?",
+                 "Does a 'night' wear armour?", "Does a 'which' cast spells?", "Does 'their' describe something "
+                 "belonging to a person?", "What does an archer shoot out of his bow?", "What is white, scary, and "
+                 "says 'boo' at night?"]
+value = 0
+answer_list = ["No", "Yes", "Yes", "No", "No", "No", "Yes", "Arrows", "Ghost"]
+fight_condition = True
+
+while fight_condition is True:
+    x = True
+    level.Level.load_map(config.fight_scene_background)
+    print("This enemy has challenged you to a fight!")
+    # Display characters (both player and enemy)
+    while x is True:
+        print(question_list[value])
+        answer = input
+        if answer == answer_list[value]:
+            # Run player attack
+            print(""""Correct! You unleashed an attack upon your enemy!\n
+                  Your enemy has been defeated""")
+            X = False
+        else:
+            print("Incorrect! Your attack failed!!")
+            # Run enemy attack
+            player.Player.take_player_health(damage)
+            value += 1
+    fight_condition = False
 
