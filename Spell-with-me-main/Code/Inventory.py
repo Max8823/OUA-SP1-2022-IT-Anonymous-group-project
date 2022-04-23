@@ -51,10 +51,6 @@ class Inventory:
         print("no")
 
 
-
-
-
-
     # creatiing the inventory
     def draw_inven(self):
 
@@ -155,11 +151,11 @@ class Inventory:
         items_list[target_item].decrease_item_count(1)
 
         if items_list[target_item].get_item_count() == 0:
-
             items_list.pop(target_item)
             slot_counter -= 1
             target_item = None
-            self.item_display_up = False
+            self.set_target_item(None)
+            self.set_item_display_up(False)
 
     def get_item_display_up(self):
         return self.item_display_up
@@ -176,66 +172,67 @@ class Inventory:
 
         if items_list:
 
+            if i is not None:
 
-            item_name = items_list[i].get_item_info()["item_name"]
-            item_header_text = item_header.render(item_name, False, (255, 0, 0))
+                item_name = items_list[i].get_item_info()["item_name"]
+                item_header_text = item_header.render(item_name, False, (255, 0, 0))
 
-            item_descrip = items_list[i].get_item_info()["descrip"]
-            item_descrip_text = item_description.render(item_descrip, False, (0, 0, 0))
+                item_descrip = items_list[i].get_item_info()["descrip"]
+                item_descrip_text = item_description.render(item_descrip, False, (0, 0, 0))
 
-            # background for the item information
-            item_background_rect = self.item_background.get_rect()
-            # this will make the item info background appear in the center of the screen
-            item_background_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
-            self.screen.blit(self.item_background, item_background_rect)
+                # background for the item information
+                item_background_rect = self.item_background.get_rect()
+                # this will make the item info background appear in the center of the screen
+                item_background_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
+                self.screen.blit(self.item_background, item_background_rect)
 
-            # item name + line below
-            item_header_text_rect = item_header_text.get_rect()
-            item_header_text_rect.center = (item_background_rect.center[0], item_background_rect.center[1] - 300)
-            self.screen.blit(item_header_text, item_header_text_rect)
-            pygame.draw.line(self.screen, (255, 0, 0), (item_header_text_rect[0], item_header_text_rect.center[1] + 50),
-                             (item_header_text_rect.right, item_header_text_rect.center[1] + 50), 3)
+                # item name + line below
+                item_header_text_rect = item_header_text.get_rect()
+                item_header_text_rect.center = (item_background_rect.center[0], item_background_rect.center[1] - 300)
+                self.screen.blit(item_header_text, item_header_text_rect)
+                pygame.draw.line(self.screen, (255, 0, 0), (item_header_text_rect[0], item_header_text_rect.center[1] + 50),
+                                 (item_header_text_rect.right, item_header_text_rect.center[1] + 50), 3)
 
-            # item image + line below
-            item_image_rect = items_list[i].get_item_info()["img"].get_rect()
-            item_image_rect.center = (item_background_rect.center[0], item_background_rect.center[1] - 100)
-            self.screen.blit(items_list[i].get_item_info()["img"], item_image_rect)
-            pygame.draw.line(self.screen, (255, 0, 0), (item_header_text_rect[0], item_image_rect.center[1] + 150),
-                             (item_header_text_rect.right, item_image_rect.center[1] + 150), 3)
+                # item image + line below
+                item_image_rect = items_list[i].get_item_info()["img"].get_rect()
+                item_image_rect.center = (item_background_rect.center[0], item_background_rect.center[1] - 100)
+                self.screen.blit(items_list[i].get_item_info()["img"], item_image_rect)
+                pygame.draw.line(self.screen, (255, 0, 0), (item_header_text_rect[0], item_image_rect.center[1] + 150),
+                                 (item_header_text_rect.right, item_image_rect.center[1] + 150), 3)
 
-            # description text
-            item_descrip_rect = item_descrip_text.get_rect()
-            item_descrip_rect.center = (item_background_rect.center[0], item_background_rect.center[1] + 100)
-            self.screen.blit(item_descrip_text, item_descrip_rect)
+                # description text
+                item_descrip_rect = item_descrip_text.get_rect()
+                item_descrip_rect.center = (item_background_rect.center[0], item_background_rect.center[1] + 100)
+                self.screen.blit(item_descrip_text, item_descrip_rect)
 
-            # setting cancel button, which will close the pop-up
-            item_display_cancel_rect = self.item_display_cancel.get_rect()
-            item_display_cancel_rect.center = (item_background_rect.center[0] - 150, item_background_rect.center[1] + 200)
-            self.screen.blit(self.item_display_cancel, item_display_cancel_rect)
-            # setting cancel pos
-            self.set_display_cancel(item_display_cancel_rect)
+                # setting cancel button, which will close the pop-up
+                item_display_cancel_rect = self.item_display_cancel.get_rect()
+                item_display_cancel_rect.center = (item_background_rect.center[0] - 150, item_background_rect.center[1] + 200)
+                self.screen.blit(self.item_display_cancel, item_display_cancel_rect)
+                # setting cancel pos
+                self.set_display_cancel(item_display_cancel_rect)
 
-            # if equippable / if not changes the buttons accordingly
-            if items_list[i].get_item_info()["equip"]:
-                item_display_equip_rect = self.item_display_equip.get_rect()
-                item_display_equip_rect.center = (
-                    item_background_rect.center[0] + 150, item_background_rect.center[1] + 200)
-                self.screen.blit(self.item_display_equip, item_display_equip_rect)
-                # setting equip item pos
-                self.set_display_equip_pos(item_display_equip_rect)
-                self.set_second_button(1)
+                # if equippable / if not changes the buttons accordingly
+                if items_list[i].get_item_info()["equip"]:
+                    item_display_equip_rect = self.item_display_equip.get_rect()
+                    item_display_equip_rect.center = (
+                        item_background_rect.center[0] + 150, item_background_rect.center[1] + 200)
+                    self.screen.blit(self.item_display_equip, item_display_equip_rect)
+                    # setting equip item pos
+                    self.set_display_equip_pos(item_display_equip_rect)
+                    self.set_second_button(1)
 
-            # if not equippable, display 'use item'
-            else:
-                item_display_use_item_rect = self.item_display_use_item.get_rect()
-                item_display_use_item_rect.center = (
-                    item_background_rect.center[0] + 150, item_background_rect.center[1] + 200)
-                self.screen.blit(self.item_display_use_item, item_display_use_item_rect)
-                # setting use item pos
-                self.set_display_use_item_pos(item_display_use_item_rect)
-                self.set_second_button(2)
+                # if not equippable, display 'use item'
+                else:
+                    item_display_use_item_rect = self.item_display_use_item.get_rect()
+                    item_display_use_item_rect.center = (
+                        item_background_rect.center[0] + 150, item_background_rect.center[1] + 200)
+                    self.screen.blit(self.item_display_use_item, item_display_use_item_rect)
+                    # setting use item pos
+                    self.set_display_use_item_pos(item_display_use_item_rect)
+                    self.set_second_button(2)
 
-        # following getters and setters are used / called when clicking on the item display 'icons'
+            # following getters and setters are used / called when clicking on the item display 'icons'
 
     def set_second_button(self, type):
         self.type = type

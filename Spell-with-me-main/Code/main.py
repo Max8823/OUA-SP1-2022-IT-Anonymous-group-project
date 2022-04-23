@@ -8,8 +8,10 @@ class Game:
 
         # general setup
         pygame.init()
+        # USIING GRAPHICS CARD through vsync = 1
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.SCALED,
                                               vsync=1)
+
 
         pygame.display.set_caption('Mega-Alpha-Force')
         self.clock = pygame.time.Clock()
@@ -24,6 +26,7 @@ class Game:
             self.clock.tick(60)
 
             self.screen.fill('blue')
+
             self.level.run()
 
             pygame.display.update()

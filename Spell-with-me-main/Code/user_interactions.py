@@ -4,6 +4,7 @@ import pygame
 import math
 
 from Inventory import Inventory
+from battle import battle
 import level
 from math import *
 
@@ -17,9 +18,12 @@ class user_interactions():
         self.player = object
         self.items_list = []
         self.chests = []
-        self.battle = False
+        self.enemies = []
+        self.in_battle = False
+        self.battle = battle(self.player, self.enemies)
         # track inventory open and item display open
         self.inventory_open = False
+        self.loaded = False
 
         # referencing level,
         self.level = level.Level
@@ -40,6 +44,10 @@ class user_interactions():
         for items in items_list:
             self.items_list.append(items)
 
+    def set_enemies(self, enemies):
+        for enemy in enemies:
+            self.enemies.append(enemy)
+
     # setting offset from level
     def set_offset(self, offset):
         self.offset = offset
@@ -52,75 +60,90 @@ class user_interactions():
     def set_item_info(self, status):
         self.camera.set_item_info_status(status)
 
+    def set_loaded(self, set):
+        self.loaded = set
+
+    def get_loaded(self):
+        return self.loaded
+
     def key_pressed(self, key):
 
         # open invenventory
-        if not self.inventory_open:
-            if key[pygame.K_i]:
-                self.clear_event()
+
+        if self.get_loaded() and not self.in_battle:
+
+            # use this later
+            if key[pygame.K_p]:
                 self.wait()
-                self.camera.set_inven_status(True)
-                self.inventory_open = True
-                self.set_item_info(False)
+                print(self.player.get_player_learned_spells())
+
+            if not self.inventory_open:
+                if key[pygame.K_i]:
+                    self.clear_event()
+                    self.wait()
+                    self.camera.set_inven_status(True)
+                    self.inventory_open = True
+                    self.set_item_info(False)
 
 
-        # this elif will close the item pop-up display if the user does not click on the 'X', requries both inventory and item display to be open
-        elif self.inventory_open and self.Inventory.get_item_display_up():
-            if key[pygame.K_i]:
-                self.clear_event()
+            # this elif will close the item pop-up display if the user does not click on the 'X', requries both inventory and item display to be open
+            elif self.inventory_open and self.Inventory.get_item_display_up():
+                if key[pygame.K_i]:
+                    self.clear_event()
+                    self.wait()
+                    self.set_item_info(False)
+                    self.Inventory.set_item_display_up(False)
+            # will close inventory, if open and item display is not
+            else:
+                if key[pygame.K_i]:
+                    self.clear_event()
+                    self.wait()
+                    self.camera.set_inven_status(False)
+                    self.inventory_open = False
+                    self.Inventory.set_item_display_up(False)
+                    self.set_item_info(False)
+
+            # movement keys
+            if key[pygame.K_w] or key[pygame.K_UP]:
+                self.player.set_player_facing('up')
+                self.player.set_player_direction_y(-1)
+                self.player.normalise_player_direction_y('vertical')
+                self.check_for_enemies()
+
+            elif key[pygame.K_s] or key[pygame.K_DOWN]:
+                self.player.set_player_facing('down')
+                self.player.set_player_direction_y(1)
+                self.player.normalise_player_direction_y('vertical')
+                self.check_for_enemies()
+
+            else:
+                self.player.set_player_direction_y(0)
+
+            if key[pygame.K_d] or key[pygame.K_RIGHT]:
+                self.player.set_player_facing('right')
+                self.player.set_player_direction_x(1)
+                self.player.normalise_player_direction_x('horizontal')
+                self.check_for_enemies()
+
+            elif key[pygame.K_a] or key[pygame.K_LEFT]:
+                self.player.set_player_facing('left')
+                self.player.set_player_direction_x(-1)
+                self.player.normalise_player_direction_x('horizontal')
+                self.check_for_enemies()
+
+            else:
+                self.player.set_player_direction_x(0)
+
+            # if the player isn't in combat and not in battle, check for chests, can add other methods for doors, ect
+
+            if pygame.mouse.get_pressed()[0]:
                 self.wait()
-                self.set_item_info(False)
-                self.Inventory.set_item_display_up(False)
-        # will close inventory, if open and item display is not
-        else:
-            if key[pygame.K_i]:
+                self.check_mouse_click_left(pygame.mouse.get_pos())
+
+            if pygame.mouse.get_pressed()[2]:
                 self.clear_event()
-                self.wait()
-                self.camera.set_inven_status(False)
-                self.inventory_open = False
-                self.Inventory.set_item_display_up(False)
-                self.set_item_info(False)
-
-        # movement keys
-        if key[pygame.K_w] or key[pygame.K_UP]:
-            self.player.set_player_facing('up')
-            self.player.set_player_direction_y(-1)
-            self.player.normalise_player_direction_y('vertical')
-
-        elif key[pygame.K_s] or key[pygame.K_DOWN]:
-            self.player.set_player_facing('down')
-            self.player.set_player_direction_y(1)
-            self.player.normalise_player_direction_y('vertical')
-
-        else:
-            self.player.set_player_direction_y(0)
-
-        if key[pygame.K_d] or key[pygame.K_RIGHT]:
-            self.player.set_player_facing('right')
-            self.player.set_player_direction_x(1)
-            self.player.normalise_player_direction_x('horizontal')
-
-        elif key[pygame.K_a] or key[pygame.K_LEFT]:
-            self.player.set_player_facing('left')
-            self.player.set_player_direction_x(-1)
-            self.player.normalise_player_direction_x('horizontal')
-
-        else:
-            self.player.set_player_direction_x(0)
-
-        # if the player isn't in combat and not in battle, check for chests, can add other methods for doors, ect
-
-        if pygame.mouse.get_pressed()[0]:
-            self.clear_event()
-
-            self.wait()
-            self.check_mouse_click_left(pygame.mouse.get_pos())
-
-        if pygame.mouse.get_pressed()[2]:
-            self.clear_event()
-            self.wait()
-            mouse_pos = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
-            self.check_mouse_click_right(mouse_pos)
+                mouse_pos = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
+                self.check_mouse_click_right(mouse_pos)
 
     def check_mouse_click_left(self, mouse_pos):
 
@@ -148,32 +171,36 @@ class user_interactions():
                 ############
                 if self.Inventory.get_display_use_item_pos().collidepoint(mouse_pos):
 
-                                ################ANGELLO##################################
-                  if self.items_list[self.Inventory.get_target_item()].get_item_code() ==0:
-                      self.player.heal_player(100)
-                      self.Inventory.consume_item()
+                    ################ANGELLO##################################
+                    if self.items_list[self.Inventory.get_target_item()].get_item_code() == 0:
+                        self.player.heal_player(100)
+                        self.Inventory.consume_item()
 
-                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==8:
-                      self.player.increase_max_health()
-                      self.Inventory.consume_item()
+                    elif self.items_list[self.Inventory.get_target_item()].get_item_code() == 8:
+                        self.player.increase_max_health()
+                        self.Inventory.consume_item()
 
-                  # updates spell damage
-                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==4:
-                       self.player.update_spell("Fire Fury", "True")
+                    elif self.items_list[self.Inventory.get_target_item()].get_item_code() in range(4, 8, 1):
+                        self.player.update_spell(self.items_list[self.Inventory.get_target_item()].get_item_name(),
+                                                 "True")
+                        self.Inventory.consume_item()
 
-                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==5:
-                       self.player.update_spell("Water Fury", "True")
+    def check_for_enemies(self):
 
-                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==6:
-                       self.player.update_spell("Earth Fury", "True")
+        i=0
+        for enemy in self.enemies:
 
-                  elif self.items_list[self.Inventory.get_target_item()].get_item_code() ==7:
-                       self.player.update_spell("Air Fury", "True")
+            if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
+                                sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))), self.enemies[i].enemy_pos)) <= 64:
+                print("set battle to true here, call draw battle, set camera to draw battle to prevent sprites "
+                      "drawing over the top")
 
+                self.battle.set_battle(self.player, self.enemies[i])
+                self.in_battle = True
 
-
-
-
+            else:
+                i += 1
+                self.in_battle = False
 
     def check_mouse_click_right(self, mouse_pos):
 
@@ -218,12 +245,12 @@ class user_interactions():
 
                     self.set_items(self.Inventory.get_items_list())
 
-                    # might need to chaneg this sprite or something to an empty chest
+                    # might need to change this sprite or something to an empty chest
                     self.chests.pop(i)
             i += 1
 
     def wait(self):
-        pygame.time.wait(250)
+        pygame.time.wait(100)
 
     def clear_event(self):
         pygame.event.clear()

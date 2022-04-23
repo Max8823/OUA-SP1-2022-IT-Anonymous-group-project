@@ -54,7 +54,7 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/book1_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "FIRE FURY", "descrip": "consume to learn Fire Fury", "equip": False,
+            self.info = {"item_name": "Fire Fury", "descrip": "consume to learn Fire Fury", "equip": False,
                          "consume": True, "img": self.image_large}
 
 
@@ -64,7 +64,7 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/book2_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "WATER FURY", "descrip": "consume to learn Water Fury ", "equip": False,
+            self.info = {"item_name": "Water Fury", "descrip": "consume to learn Water Fury ", "equip": False,
                          "consume": True, "img": self.image_large}
 
 
@@ -74,7 +74,7 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/book3_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "EARTH FURY", "descrip": "consume to learn Earth Fury ", "equip": False,
+            self.info = {"item_name": "Earth Fury", "descrip": "consume to learn Earth Fury ", "equip": False,
                          "consume": True, "img": self.image_large}
 
         # previously known as sword, changed equip to false and consume to true
@@ -85,7 +85,7 @@ class Item:
             self.rect = self.image.get_rect(center=(0, 0))
             self.image_large = pygame.image.load('../graphics/items/large/sword1_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "AIR FURY", "descrip": "consume to learn Air Fury", "equip": False, "consume": True,
+            self.info = {"item_name": "Air Fury", "descrip": "consume to learn Air Fury", "equip": False, "consume": True,
                          "img": self.image_large}
 
 
@@ -120,6 +120,9 @@ class Item:
 
     def get_item_count(self):
         return self.item_count
+
+    def get_item_name(self):
+        return self.info["item_name"]
 
 
     def get_item_pos(self):
