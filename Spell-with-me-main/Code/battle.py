@@ -1,63 +1,82 @@
 import pygame
-import Inventory
-import player
-import enemy_class
+from player import *
+from Inventory import Inventory
+from enemy_class import *
+import Item
 import level
 import config
 
+battle_status = False
+player = object
+enemy = object
 
 class battle:
-    def __init__(self, player, enemy):
-        self.item_display_up = False
-        self.inventory_open = False
+    def __init__(self):
 
-        self.enemy = enemy
-        self.player = player
+        self.player = object
+        self.enemy = object
+        self.loot = None
+        self.turn = 'player'
+        self.result = False
+
+
         self.screen = pygame.display.get_surface()
 
+    def set_battle(self, player1, enemy1):
+        global player, enemy
 
-    def set_battle(self, player, enemy):
-        self.enemy = enemy
-        self.player = player
+        player = player1
+        enemy = enemy1
 
-    def get_battle_players(self):
-        return self.enemy, self.player
+    def set_battle_status(self, status):
+        global battle_status
+        battle_status = status
 
-    def draw_arena(self):
-        self.screen.fill('white')
-        self.get_battle_players()
-        self.player = self.get_battle_players()[1]
-        self.enemy = self.get_battle_players()[0]
-        print(self.player.get_player_pos())
+    def get_battle_status(self):
+        global battle_status
+        return battle_status
 
-        print(self.player, self.enemy)
 
-question_list = ["Is the word 'whistel' spelt correctly?", "Is the word 'knife' spelt correctly?",
-                 "Is the word 'wriggle' spelt correctly?", "Is the word 'rong' spelt correctly?",
-                 "Does a 'night' wear armour?", "Does a 'which' cast spells?", "Does 'their' describe something "
-                 "belonging to a person?", "What does an archer shoot out of his bow?", "What is white, scary, and "
-                 "says 'boo' at night?"]
-value = 0
-answer_list = ["No", "Yes", "Yes", "No", "No", "No", "Yes", "Arrows", "Ghost"]
-fight_condition = True
+    def end_battle(self):
+        global battle_status
+        battle_status = False
 
-while fight_condition is True:
-    x = True
-    level.Level.load_map(config.fight_scene_background)
-    print("This enemy has challenged you to a fight!")
-    # Display characters (both player and enemy)
-    while x is True:
-        print(question_list[value])
-        answer = input
-        if answer == answer_list[value]:
-            # Run player attack
-            print(""""Correct! You unleashed an attack upon your enemy!\n
-                  Your enemy has been defeated""")
-            X = False
-        else:
-            print("Incorrect! Your attack failed!!")
-            # Run enemy attack
-            player.Player.take_player_health(damage)
-            value += 1
-    fight_condition = False
+        self.set_battle_loot(enemy.get_loot())
+        pygame.sprite.Sprite.kill(enemy)
+
+        self.set_result(True)
+
+        #will shove enemy to 0:0
+        enemy.set_enemy_pos()
+
+    def set_battle_loot(self, loot):
+        loot_list = list(loot)
+        player_known = player.get_player_learned_spells()
+        while loot_list[0] in player_known:
+
+            loot_list[0] = random.randrange(0, 9, 1)
+
+        self.loot = loot_list
+
+
+
+    def get_battle_loot(self):
+        return self.loot
+
+    def get_result(self):
+        return self.result
+
+    def set_result(self, result):
+        self.result = result
+
+    def draw_battle(self):
+        #chaneg to background image / could be random 1 of 3? or 1 per map?
+
+            self.screen.fill('white')
+
+            self.screen.blit(player.get_player_image(), (250, 250))
+            self.screen.blit(enemy.get_enemy_image(), (100, 100))
+
+
+
 

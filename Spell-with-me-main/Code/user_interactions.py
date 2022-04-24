@@ -20,7 +20,7 @@ class user_interactions():
         self.chests = []
         self.enemies = []
         self.in_battle = False
-        self.battle = battle(self.player, self.enemies)
+        self.battle = battle()
         # track inventory open and item display open
         self.inventory_open = False
         self.loaded = False
@@ -70,12 +70,17 @@ class user_interactions():
 
         # open invenventory
 
-        if self.get_loaded() and not self.in_battle:
+        if self.get_loaded():
 
-            # use this later
+            # this is a testing method, used for cancelling combat
             if key[pygame.K_p]:
                 self.wait()
-                print(self.player.get_player_learned_spells())
+
+                self.battle.end_battle()
+                self.in_battle = False
+                self.Inventory.add_item(self.battle.get_battle_loot()[0], self.battle.get_battle_loot()[1])
+                self.set_items(self.Inventory.get_items_list())
+
 
             if not self.inventory_open:
                 if key[pygame.K_i]:
@@ -103,36 +108,37 @@ class user_interactions():
                     self.Inventory.set_item_display_up(False)
                     self.set_item_info(False)
 
-            # movement keys
-            if key[pygame.K_w] or key[pygame.K_UP]:
-                self.player.set_player_facing('up')
-                self.player.set_player_direction_y(-1)
-                self.player.normalise_player_direction_y('vertical')
-                self.check_for_enemies()
+            if not self.in_battle:
+                # movement keys
+                if key[pygame.K_w] or key[pygame.K_UP]:
+                    self.player.set_player_facing('up')
+                    self.player.set_player_direction_y(-1)
+                    self.player.normalise_player_direction_y('vertical')
+                    self.check_for_enemies()
 
-            elif key[pygame.K_s] or key[pygame.K_DOWN]:
-                self.player.set_player_facing('down')
-                self.player.set_player_direction_y(1)
-                self.player.normalise_player_direction_y('vertical')
-                self.check_for_enemies()
+                elif key[pygame.K_s] or key[pygame.K_DOWN]:
+                    self.player.set_player_facing('down')
+                    self.player.set_player_direction_y(1)
+                    self.player.normalise_player_direction_y('vertical')
+                    self.check_for_enemies()
 
-            else:
-                self.player.set_player_direction_y(0)
+                else:
+                    self.player.set_player_direction_y(0)
 
-            if key[pygame.K_d] or key[pygame.K_RIGHT]:
-                self.player.set_player_facing('right')
-                self.player.set_player_direction_x(1)
-                self.player.normalise_player_direction_x('horizontal')
-                self.check_for_enemies()
+                if key[pygame.K_d] or key[pygame.K_RIGHT]:
+                    self.player.set_player_facing('right')
+                    self.player.set_player_direction_x(1)
+                    self.player.normalise_player_direction_x('horizontal')
+                    self.check_for_enemies()
 
-            elif key[pygame.K_a] or key[pygame.K_LEFT]:
-                self.player.set_player_facing('left')
-                self.player.set_player_direction_x(-1)
-                self.player.normalise_player_direction_x('horizontal')
-                self.check_for_enemies()
+                elif key[pygame.K_a] or key[pygame.K_LEFT]:
+                    self.player.set_player_facing('left')
+                    self.player.set_player_direction_x(-1)
+                    self.player.normalise_player_direction_x('horizontal')
+                    self.check_for_enemies()
 
-            else:
-                self.player.set_player_direction_x(0)
+                else:
+                    self.player.set_player_direction_x(0)
 
             # if the player isn't in combat and not in battle, check for chests, can add other methods for doors, ect
 
@@ -147,7 +153,7 @@ class user_interactions():
 
     def check_mouse_click_left(self, mouse_pos):
 
-        if not self.inventory_open or not self.battle:
+        if not self.inventory_open:
             # this needs to be done because of re-sizing map
             mouse_pos_actual = mouse_pos[0] + self.get_offset()[0], mouse_pos[1] + \
                                self.get_offset()[1]
@@ -171,7 +177,7 @@ class user_interactions():
                 ############
                 if self.Inventory.get_display_use_item_pos().collidepoint(mouse_pos):
 
-                    ################ANGELLO##################################
+
                     if self.items_list[self.Inventory.get_target_item()].get_item_code() == 0:
                         self.player.heal_player(100)
                         self.Inventory.consume_item()
@@ -192,11 +198,26 @@ class user_interactions():
 
             if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
                                 sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))), self.enemies[i].enemy_pos)) <= 64:
-                print("set battle to true here, call draw battle, set camera to draw battle to prevent sprites "
-                      "drawing over the top")
 
                 self.battle.set_battle(self.player, self.enemies[i])
                 self.in_battle = True
+                self.battle.set_battle_status(True)
+
+                if not self.in_battle:
+
+                    if self.battle.get_result():
+
+                        self.battle.end_battle()
+                        self.in_battle = False
+                        self.Inventory.add_item(self.battle.get_battle_loot()[0], self.battle.get_battle_loot()[1])
+                        self.set_items(self.Inventory.get_items_list())
+
+
+                    else:
+                        pygame.sprite.Sprite.kill(self.player)
+
+
+
 
             else:
                 i += 1

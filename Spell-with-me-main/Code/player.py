@@ -67,6 +67,8 @@ class Player(pygame.sprite.Sprite):
     # return questions
 
 #health bar display
+
+
     def draw_player_health(self):
         if self.player_current_health < self.player_target_health:
             self.player_current_health += self.change_speed
@@ -82,17 +84,18 @@ class Player(pygame.sprite.Sprite):
 #used when gaining items from kills and chests, will check what spells are learnt
     def get_player_learned_spells(self):
         learnt_spells = []
+
         i = 0
         for spell in self.player_spells:
             if self.player_spells[spell]["learnt"]:
-                learnt_spells.append(spell)
+                if self.player_spells[spell]["spell_id"] >= 4:
+                    learnt_spells.append(self.player_spells[spell]["spell_id"])
 
         return learnt_spells
 
 
 # update spell through item use (book)
     def update_spell(self, spell_name, value):
-        print(spell_name, value)
         self.player_spells[spell_name]["learnt"] = value
 
 
@@ -138,6 +141,9 @@ class Player(pygame.sprite.Sprite):
                 next_animation = pygame.image.load(full_path).convert_alpha()
                 animations.append(next_animation)
         return animations
+
+    def get_player_image(self):
+        return self.image
 
 #set player facing - used for animations
     def set_player_facing(self, facing):

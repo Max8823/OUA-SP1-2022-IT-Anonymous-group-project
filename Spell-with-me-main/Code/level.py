@@ -11,7 +11,8 @@ from Inventory import Inventory
 import user_interactions
 from enemy_class import Enemy
 from asset_loader import *
-import battle
+from battle import *
+
 from random import choice, randint
 
 inven_open = False
@@ -98,9 +99,7 @@ class Level:
             'boundaries': load_csv_layout('../graphics/maps/' + str(map_code) + '/map_boundaries.csv'),
             'beings': load_csv_layout('../graphics/maps/' + str(map_code) + '/map_beings.csv'),
             'objects': load_csv_layout('../graphics/maps/' + str(map_code) + '/map_objects.csv')
-
         }
-
         images = {
             'filler': import_asset('../graphics/maps/' + str(map_code) + '/filler'),
             'objects': import_asset('../graphics/maps/' + str(map_code) + '/objects')
@@ -165,13 +164,14 @@ class Camera(pygame.sprite.Group):
     def __init__(self):
         # general setup
         super().__init__()
+        self.battle = battle()
         self.Inventory = Inventory()
 
         self.display_surface = pygame.display.get_surface()
         self.half_width = self.display_surface.get_size()[0] / 2
         self.half_height = self.display_surface.get_size()[1] / 2
         self.offset = pygame.math.Vector2()
-        self.battle = battle
+        
 
 
 
@@ -210,21 +210,23 @@ class Camera(pygame.sprite.Group):
         self.offset.x = player.rect.centerx - self.half_width
         self.offset.y = player.rect.centery - self.half_height
 
+        if not self.battle.get_battle_status():
 
+            if inven_open:
 
-        if inven_open:
+                if item_info:
 
-            if item_info:
+                    self.draw_sprites()
+                    self.Inventory.draw_inven()
+                    self.Inventory.draw_item_info()
 
-                self.draw_sprites()
-                self.Inventory.draw_inven()
-                self.Inventory.draw_item_info()
-
+                else:
+                    self.draw_sprites()
+                    self.Inventory.draw_inven()
             else:
                 self.draw_sprites()
-                self.Inventory.draw_inven()
         else:
-            self.draw_sprites()
+            self.battle.draw_battle()
 
 
 

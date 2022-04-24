@@ -30,6 +30,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Lick": {"spell_id": 1, "damage": 100, "img": '..'},
                     "Roll": {"spell_id": 2, "damage": 150, "img": '..'},
                 }
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
 
             elif map_code == 1:
                 self.enemy_name = "rat"
@@ -41,6 +42,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Bite": {"spell_id": 1, "damage": 100, "img": '..'},
                     "Scratch": {"spell_id": 2, "damage": 150, "img": '..'},
                 }
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
 
             else:
                 self.enemy_name = "bat"
@@ -53,8 +55,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Gust of wind": {"spell_id": 2, "damage": 250, "img": '..'},
                 }
 
-            self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(0, 2),
-                               "item_code": 0, "qty": 1}
+            self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
 
 
         elif self.enemy_code == 1:
@@ -68,6 +69,8 @@ class Enemy(pygame.sprite.Sprite):
                     "Howl": {"spell_id": 1, "damage": 175, "img": '..'},
                     "Ferocious bite": {"spell_id": 2, "damage": 250, "img": '..'},
                 }
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+
             elif map_code == 1:
                 self.enemy_name = "Zombie"
                 self.enemy_health = 350
@@ -78,6 +81,8 @@ class Enemy(pygame.sprite.Sprite):
                     "Punch": {"spell_id": 1, "damage": 220, "img": '..'},
                     "Bite": {"spell_id": 2, "damage": 250, "img": '..'},
                 }
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+
             else:
                 self.enemy_name = "Ghost"
                 self.enemy_health = 450
@@ -88,6 +93,7 @@ class Enemy(pygame.sprite.Sprite):
                     "pass through": {"spell_id": 1, "damage": 225, "img": '..'},
                     "Curse": {"spell_id": 2, "damage": 275, "img": '..'},
                 }
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
 
 
         elif self.enemy_code == 2:
@@ -104,6 +110,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Dark Mist": {"spell_id": 2, "damage": 300, "img": '..'},
                     "Terrify": {"spell_id": 3, "damage": 300, "img": '..'}
                 }
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
 
             elif map_code == 1:
                 self.enemy_name = "grim reaper"
@@ -118,6 +125,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Cleave": {"spell_id": 2, "damage": 300, "img": '..'},
                     "Horrify": {"spell_id": 3, "damage": 350, "img": '..'}
                 }
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
 
             else:
                 self.enemy_name = "Knight"
@@ -133,8 +141,24 @@ class Enemy(pygame.sprite.Sprite):
                     "Terrify": {"spell_id": 3, "damage": 300, "img": '..'}
                 }
 
-                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(0, 2),
-                                   "item_code": 0, "qty": 1}
+                self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+
+    def draw_enemy_health(self):
+        if self.player_current_health < self.player_target_health:
+            self.player_current_health += self.change_speed
+
+        if self.player_current_health > self.player_target_health:
+            self.player_current_health -= self.change_speed
+
+        health_bar_width = int(self.player_current_health / self.health_ratio)
+        health_bar = pygame.Rect(10, 45, health_bar_width, 25)
+        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), health_bar)
+
+
+    def get_loot(self):
+        loot = int(self.enemy_loot["item_code"]), int(self.enemy_loot["qty"])
+        return loot
+
 
     def get_item_code(self):
         item_code = random.randrange(0, 9)
@@ -155,6 +179,9 @@ class Enemy(pygame.sprite.Sprite):
 
     def enemy_cast_spell(self, spell):
         return self.enemy_spells[spell]
+
+    def get_enemy_image(self):
+        return self.image
 
     def get_enemy_pos(self):
         return self.enemy_pos

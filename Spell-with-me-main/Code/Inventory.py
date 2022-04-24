@@ -125,7 +125,6 @@ class Inventory:
     def full_inventory(self):
 
         item_header_text = item_header.render("the inventory is full", False, (0, 0, 0))
-        print(item_header_text)
         item_header_text_rect = item_header_text.get_rect()
         item_header_text_rect.center = (self.screen.get_width() // 2, 75)
 
