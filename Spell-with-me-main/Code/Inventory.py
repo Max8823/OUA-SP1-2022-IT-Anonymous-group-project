@@ -15,10 +15,13 @@ item_description = pygame.font.Font('../fonts/Tangerine-Bold.ttf', 45)
 inven_background = pygame.image.load('../graphics/inventory/inven_background.png')
 item_slot = pygame.image.load('../graphics/inventory/item_slot.png')
 
+
 # ITEM DISPLAY
 target_item = 0
 slot_counter = 0
+
 items_list = []
+equipped_items = []
 
 
 class Inventory:
@@ -54,21 +57,22 @@ class Inventory:
     # creatiing the inventory
     def draw_inven(self):
 
-        global slot_counter
-
         self.screen.blit(inven_background, (200, 100))
 
-        self.slot_x = 750
+        self.slot_x = 635
         self.slot_y = 100
-        self.item_posX = 755
+        self.item_posX = 640
         self.item_posY = 105
 
         i = 0
         for rows in range(self.rows):
-            self.slot_x = 750
-            self.slot_y += 68
-            self.item_posX = 755
-            self.item_posY += 68
+
+            self.slot_x = 635
+            self.slot_y += 80
+
+            self.item_posX = 640
+            self.item_posY += 80
+
 
             for col in range(self.col):
 
@@ -83,14 +87,31 @@ class Inventory:
                     qty = items_list[i].get_item_count()
                     text_surface, rect = font.render(str(qty), (0, 0, 0))
                     self.screen.blit(text_surface, (self.item_posX + 5, self.item_posY + 5))
-                    self.item_posX += 68
-                    self.slot_x += 68
+                    self.item_posX += 116
+                    self.slot_x += 116
 
                     i += 1
 
                 else:
                     self.screen.blit(item_slot, (self.slot_x, self.slot_y))
-                    self.slot_x += 68
+
+                    self.slot_x += 116
+
+        self.draw_equipment()
+
+
+
+
+
+    def draw_equipment(self):
+        global equipped_items
+
+        for item in equipped_items:
+            print("do work here")
+
+
+
+
 
     def add_item(self, item_code, qty):
         global slot_counter
@@ -127,6 +148,19 @@ class Inventory:
         item_header_text = item_header.render("the inventory is full", False, (0, 0, 0))
         item_header_text_rect = item_header_text.get_rect()
         item_header_text_rect.center = (self.screen.get_width() // 2, 75)
+
+
+    def equip_item(self, target_item):
+        global equipped_items
+
+        if len(equipped_items) <= 3:
+            equipped_items.append(target_item)
+            items_list[target_item].pop()
+
+        else:
+            print("all equipment slots full")
+
+
 
     def get_items_list(self):
         return items_list
@@ -232,6 +266,8 @@ class Inventory:
                     self.set_second_button(2)
 
             # following getters and setters are used / called when clicking on the item display 'icons'
+
+
 
     def set_second_button(self, type):
         self.type = type

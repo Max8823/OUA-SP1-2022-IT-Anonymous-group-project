@@ -36,7 +36,6 @@ class Player(pygame.sprite.Sprite):
         self.load_player_animations()
 
         self.player_spells = {
-
             "Fire Blast": {"spell_id": 0, "damage": 100, "learnt": True, "img": '..'},
             "Water Blast": {"spell_id": 1, "damage": 100, "learnt": True, "img": '..'},
             "Earth Blast": {"spell_id": 2, "damage": 100, "learnt": True, "img": '..'},
@@ -45,8 +44,8 @@ class Player(pygame.sprite.Sprite):
             "Water Fury": {"spell_id": 5, "damage": 300, "learnt": False, "img": '..'},
             "Earth Fury": {"spell_id": 6, "damage": 300, "learnt": False, "img": '..'},
             "Air Fury": {"spell_id": 7, "damage": 300, "learnt": False, "img": '..'},
-
         }
+
         ##
         self.player_current_health = 1000
         self.player_max_health = 1000

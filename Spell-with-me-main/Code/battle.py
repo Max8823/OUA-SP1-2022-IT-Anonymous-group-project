@@ -18,6 +18,7 @@ class battle:
         self.loot = None
         self.turn = 'player'
         self.result = False
+        self.map0_background = pygame.image.load('../graphics/maps/0/Forest_Fight.png').convert_alpha()
 
 
         self.screen = pygame.display.get_surface()
@@ -72,10 +73,11 @@ class battle:
     def draw_battle(self):
         #chaneg to background image / could be random 1 of 3? or 1 per map?
 
-            self.screen.fill('white')
 
-            self.screen.blit(player.get_player_image(), (250, 250))
-            self.screen.blit(enemy.get_enemy_image(), (100, 100))
+            self.screen.blit(self.map0_background, (0,0))
+
+            self.screen.blit(player.get_player_image(), (450, 550))
+            self.screen.blit(enemy.get_enemy_image(), (500, 500))
 
 
 
