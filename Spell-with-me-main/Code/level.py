@@ -17,6 +17,7 @@ from random import choice, randint
 
 inven_open = False
 item_info = False
+spell_info = False
 
 
 
@@ -204,6 +205,11 @@ class Camera(pygame.sprite.Group):
         global item_info
         item_info = status
 
+    def set_spell_info_status(self, status):
+        global spell_info
+
+        spell_info = status
+
     # includes drawing inventory
     def draw_all(self, player):
         # getting the offset
@@ -219,6 +225,11 @@ class Camera(pygame.sprite.Group):
                     self.draw_sprites()
                     self.Inventory.draw_inven()
                     self.Inventory.draw_item_info()
+
+                elif spell_info:
+                    self.draw_sprites()
+                    self.Inventory.draw_inven()
+                    self.Inventory.draw_spell_info()
 
                 else:
                     self.draw_sprites()

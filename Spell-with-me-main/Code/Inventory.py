@@ -1,11 +1,12 @@
 import pygame
 
 from Item import Item
+
 import config
 
 pygame.init()
-
 pygame.font.init()
+
 # FONTS
 font = pygame.freetype.Font(pygame.font.match_font("calibiri"), 26)
 item_header = pygame.font.Font('../fonts/Tangerine-Bold.ttf', 50)
@@ -14,14 +15,19 @@ item_description = pygame.font.Font('../fonts/Tangerine-Bold.ttf', 45)
 # INVENTORY BACKGROUND
 inven_background = pygame.image.load('../graphics/inventory/inven_background.png')
 item_slot = pygame.image.load('../graphics/inventory/item_slot.png')
+spell_background = pygame.image.load('../graphics/inventory/Spell_box.png')
 
 
 # ITEM DISPLAY
 target_item = 0
+target_spell = "None"
 slot_counter = 0
 
 items_list = []
 equipped_items = []
+spells = {}
+spells_pos = []
+
 
 
 class Inventory:
@@ -46,13 +52,9 @@ class Inventory:
         self.load_img()
         self.inventory_full = False
         self.item_display_up = False
+        self.spell_display_up = False
 
 ##############
-
-    def draw_spells(self):
-        ##################
-        print("no")
-
 
     # creatiing the inventory
     def draw_inven(self):
@@ -98,7 +100,77 @@ class Inventory:
                     self.slot_x += 116
 
         self.draw_equipment()
+        self.draw_spells()
 
+
+    def set_spells(self, player_spells):
+        global spells
+
+        spells = player_spells.copy()
+
+    def draw_spells(self):
+        global spells
+
+        spell_slotx = 282
+        spell_sloty = 218
+
+
+#Fire spells
+        self.screen.blit(spell_background, (spell_slotx, spell_sloty))
+        self.screen.blit(spells['Fire Blast']['img'], (spell_slotx+20, spell_sloty+15))
+        fire_blast_rect = spell_slotx+20, spell_sloty+15
+        self.set_spell_pos((fire_blast_rect, "Fire Blast"))
+
+
+
+        self.screen.blit(spell_background, (spell_slotx-64, spell_sloty+64))
+        if spells['Fire Fury']['learnt']:
+            self.screen.blit(spells['Fire Fury']['img'], (spell_slotx -44, spell_sloty + 79))
+            fire_fury_rect = spell_slotx-44, spell_sloty+79
+            self.set_spell_pos((fire_fury_rect, "Fire Fury"))
+
+
+
+#Water spells
+        self.screen.blit(spell_background, (spell_slotx + 118, spell_sloty))
+        self.screen.blit(spells['Water Blast']['img'], (spell_slotx + 138, spell_sloty+15))
+        water_blast_rect = spell_slotx+138, spell_sloty+15
+        self.set_spell_pos((water_blast_rect, "Water Blast"))
+
+
+        self.screen.blit(spell_background, (spell_slotx + 188, spell_sloty +64))
+        if spells['Water Fury']['learnt']:
+            self.screen.blit(spells['Water Fury']['img'], (spell_slotx + 208, spell_sloty + 79))
+            water_fury_rect = spell_slotx+208, spell_sloty+79
+            self.set_spell_pos((water_fury_rect, "Water Fury"))
+
+
+#air spells
+        self.screen.blit(spell_background, (spell_slotx+118, spell_sloty+256))
+        self.screen.blit(spells['Air Blast']['img'], (spell_slotx + 138, spell_sloty +276))
+        air_blast_rect = spell_slotx+138, spell_sloty+276
+        self.set_spell_pos((air_blast_rect, "Air Blast"))
+
+
+        self.screen.blit(spell_background, (spell_slotx+ 188, spell_sloty + 192))
+        if spells['Air Fury']['learnt']:
+            self.screen.blit(spells['Air Fury']['img'], (spell_slotx + 208, spell_sloty + 212))
+            Air_Fury_rect = (spell_slotx+208, spell_sloty+212)
+            self.set_spell_pos((Air_Fury_rect, "Air Fury"))
+
+
+#Earth spells
+        self.screen.blit(spell_background, (spell_slotx, spell_sloty+256))
+        self.screen.blit(spells['Earth Blast']['img'], (spell_slotx +20, spell_sloty + 276))
+        earth_blast_rect = spell_slotx+20, spell_sloty+276
+        self.set_spell_pos((earth_blast_rect, "Earth Blast"))
+
+
+        self.screen.blit(spell_background, (spell_slotx -64 , spell_sloty +192))
+        if spells['Earth Fury']['learnt']:
+            self.screen.blit(spells['Earth Fury']['img'], (spell_slotx -44, spell_sloty+ 212))
+            earth_fury_rect = spell_slotx-44, spell_sloty+212
+            self.set_spell_pos((earth_fury_rect, "Earth Blast"))
 
 
 
@@ -108,9 +180,6 @@ class Inventory:
 
         for item in equipped_items:
             print("do work here")
-
-
-
 
 
     def add_item(self, item_code, qty):
@@ -178,6 +247,14 @@ class Inventory:
 
         return target_item
 
+    def set_taregt_spell(self, target):
+        global target_spell
+        target_spell = target
+
+    def get_target_spell(self):
+        global  target_spell
+        return target_spell
+
     def consume_item(self):
         global slot_counter, target_item
 
@@ -195,6 +272,52 @@ class Inventory:
 
     def set_item_display_up(self, status):
         self.item_display_up = status
+
+    def set_spell_display_up(self, status):
+        self.spell_display_up = status
+
+    def get_spell_display_up(self):
+        return  self.spell_display_up
+
+    def set_spell_pos(self, spell):
+        global spells_pos
+
+        if len(spells_pos) < 8:
+            if spell not in spells_pos:
+                spells_pos.append(spell)
+
+
+    def get_spell_pos(self):
+        global spells_pos
+
+        return spells_pos
+
+
+    def draw_spell_info(self):
+        global target_spell
+
+        spell_name = target_spell
+        spell_header_text = item_header.render(spell_name, False, (255,0,0))
+
+        spell_descrip = 'damage : ' + str(spells[target_spell]["damage"])
+        spell_descrip_text = item_description.render(spell_descrip, False,(0,0,0))
+
+        # background for the item information
+        item_background_rect = self.item_background.get_rect()
+        # this will make the item info background appear in the center of the screen
+        item_background_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
+        self.screen.blit(self.item_background, item_background_rect)
+
+        spell_header_text_rect = spell_header_text.get_rect()
+        spell_header_text_rect.center = (item_background_rect.center[0], item_background_rect.center[1] - 300)
+        self.screen.blit(spell_header_text, spell_header_text_rect)
+        pygame.draw.line(self.screen, (255, 0, 0), (spell_header_text_rect[0], spell_header_text_rect.center[1] + 50),
+                         (spell_header_text_rect.right, spell_header_text_rect.center[1] + 50), 3)
+
+        item_descrip_rect = spell_descrip_text.get_rect()
+        item_descrip_rect.center = (item_background_rect.center[0], item_background_rect.center[1] + 100)
+        self.screen.blit(spell_descrip_text, item_descrip_rect)
+
 
 
     # change the + and - values to change their positioning when real graphics come in
@@ -267,8 +390,6 @@ class Inventory:
 
             # following getters and setters are used / called when clicking on the item display 'icons'
 
-
-
     def set_second_button(self, type):
         self.type = type
 
@@ -286,6 +407,7 @@ class Inventory:
 
     def get_display_equip_pos(self):
         return self.equip_pos
+
 
     def set_display_use_item_pos(self, use_item_pos):
         self.use_item_pos = use_item_pos

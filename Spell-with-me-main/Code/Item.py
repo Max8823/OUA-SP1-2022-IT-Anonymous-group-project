@@ -112,7 +112,6 @@ class Item:
         self.item_code = item_code
 
     def increase_item_count(self, qty):
-        print("increased")
         self.item_count += qty
 
     def decrease_item_count(self,qty):

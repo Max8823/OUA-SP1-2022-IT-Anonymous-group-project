@@ -27,6 +27,7 @@ class user_interactions():
 
         # referencing level,
         self.level = level.Level
+        self.spells_pos = self.Inventory.get_spell_pos()
 
     # used to pull chests into this class, preventing circular import
     def set_chest_list(self, chests):
@@ -60,6 +61,9 @@ class user_interactions():
     def set_item_info(self, status):
         self.camera.set_item_info_status(status)
 
+    def set_spell_info(self, status):
+        self.camera.set_spell_info_status(status)
+
     def set_loaded(self, set):
         self.loaded = set
 
@@ -75,19 +79,21 @@ class user_interactions():
             # this is a testing method, used for cancelling combat
             if key[pygame.K_p]:
                 self.wait()
-
                 self.battle.end_battle()
                 self.in_battle = False
                 self.Inventory.add_item(self.battle.get_battle_loot()[0], self.battle.get_battle_loot()[1])
                 self.set_items(self.Inventory.get_items_list())
 
 
+
+
             if not self.inventory_open:
                 if key[pygame.K_i]:
-                    self.clear_event()
                     self.wait()
                     self.camera.set_inven_status(True)
                     self.inventory_open = True
+                    spells = self.player.get_player_spells()
+                    self.Inventory.set_spells(spells)
                     self.set_item_info(False)
 
 
@@ -98,6 +104,14 @@ class user_interactions():
                     self.wait()
                     self.set_item_info(False)
                     self.Inventory.set_item_display_up(False)
+
+            elif self.inventory_open and self.Inventory.get_spell_display_up():
+                if key[pygame.K_i]:
+                    self.clear_event()
+                    self.wait()
+                    self.set_spell_info(False)
+                    self.Inventory.set_spell_display_up(False)
+
             # will close inventory, if open and item display is not
             else:
                 if key[pygame.K_i]:
@@ -147,7 +161,7 @@ class user_interactions():
                 self.check_mouse_click_left(pygame.mouse.get_pos())
 
             if pygame.mouse.get_pressed()[2]:
-                self.clear_event()
+
                 mouse_pos = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
                 self.check_mouse_click_right(mouse_pos)
 
@@ -190,6 +204,8 @@ class user_interactions():
                         self.player.update_spell(self.items_list[self.Inventory.get_target_item()].get_item_name(),
                                                  "True")
                         self.Inventory.consume_item()
+                        spells = self.player.get_player_spells()
+                        self.Inventory.set_spells(spells)
 
     def check_for_enemies(self):
 
@@ -225,11 +241,37 @@ class user_interactions():
 
     def check_mouse_click_right(self, mouse_pos):
 
-        if self.inventory_open and not self.Inventory.get_item_display_up():
-            self.get_item_display(mouse_pos)
+        if self.inventory_open and not self.Inventory.get_item_display_up() and not self.Inventory.get_spell_display_up():
+            if not self.get_item_display(mouse_pos):
+                self.get_spell_display(mouse_pos)
+
+
+
+    def get_spell_display(self, mouse_pos):
+
+        i=0
+        for spell in self.spells_pos:
+            pos = self.spells_pos[i][0]
+            posx = pos[0]
+            posy = pos[1]
+
+            if abs((((((posx + 55) - posx) / 2) + posx) - mouse_pos[0])) <= 30 and abs(
+                    (((((posy + 55) - posy) / 2) + posy) - mouse_pos[1])) <= 30:
+
+                self.Inventory.set_taregt_spell(self.spells_pos[i][1])
+                self.Inventory.draw_spell_info()
+                self.Inventory.set_spell_display_up(True)
+                self.set_spell_info(True)
+
+
+            else:
+                i+=1
+
 
     def get_item_display(self, mouse_pos):
         i = 0
+        spells_pos = self.Inventory.get_spell_pos()
+        MatchFound = False
 
         for items in self.items_list:
 
@@ -245,10 +287,12 @@ class user_interactions():
                 self.Inventory.draw_item_info()
                 self.Inventory.set_item_display_up(True)
                 self.set_item_info(True)
+                MatchFound = True
 
             else:
                 i += 1
 
+        return MatchFound
     # checking all the chests on the current map
     def check_chests(self, mouse_pos):
 

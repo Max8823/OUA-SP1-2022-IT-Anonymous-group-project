@@ -25,9 +25,10 @@ class Chest:
     # this is temporary
     def generate_contents(self):
         item_code = random.randrange(0, 9)
-        qty = random.randrange(1, 5)
 
         if item_code in {4,5,6,7}:
             qty = 1
+        else:
+            qty = random.randrange(1,5)
 
         return item_code, qty

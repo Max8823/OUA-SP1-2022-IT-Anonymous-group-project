@@ -156,7 +156,15 @@ class Enemy(pygame.sprite.Sprite):
 
 
     def get_loot(self):
-        loot = int(self.enemy_loot["item_code"]), int(self.enemy_loot["qty"])
+
+        print(int(self.enemy_loot["item_code"]))
+
+        if int(self.enemy_loot["item_code"]) in (4,5,6,7):
+            print("here")
+            loot = int(self.enemy_loot["item_code"]), 1
+        else:
+            loot = int(self.enemy_loot["item_code"]), int(self.enemy_loot["qty"])
+
         return loot
 
 

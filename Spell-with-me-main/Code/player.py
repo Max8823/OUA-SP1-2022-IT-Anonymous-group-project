@@ -36,14 +36,15 @@ class Player(pygame.sprite.Sprite):
         self.load_player_animations()
 
         self.player_spells = {
-            "Fire Blast": {"spell_id": 0, "damage": 100, "learnt": True, "img": '..'},
-            "Water Blast": {"spell_id": 1, "damage": 100, "learnt": True, "img": '..'},
-            "Earth Blast": {"spell_id": 2, "damage": 100, "learnt": True, "img": '..'},
-            "Air Blast": {"spell_id": 3, "damage": 100, "learnt": True, "img": '..'},
-            "Fire Fury": {"spell_id": 4, "damage": 300, "learnt": False, "img": '..'},
-            "Water Fury": {"spell_id": 5, "damage": 300, "learnt": False, "img": '..'},
-            "Earth Fury": {"spell_id": 6, "damage": 300, "learnt": False, "img": '..'},
-            "Air Fury": {"spell_id": 7, "damage": 300, "learnt": False, "img": '..'},
+
+            "Fire Blast": {"spell_id": 0, "damage": 100, "learnt": True, "img": pygame.image.load('../graphics/Spells/fire_blast.png')},
+            "Water Blast": {"spell_id": 1, "damage": 100, "learnt": True, "img": pygame.image.load('../graphics/Spells/water_blast.png')},
+            "Earth Blast": {"spell_id": 2, "damage": 100, "learnt": True, "img": pygame.image.load('../graphics/Spells/earth_blast.png')},
+            "Air Blast": {"spell_id": 3, "damage": 100, "learnt": True, "img": pygame.image.load('../graphics/Spells/air_blast.png')},
+            "Fire Fury": {"spell_id": 4, "damage": 300, "learnt": False, "img": pygame.image.load('../graphics/Spells/fire_fury.png')},
+            "Water Fury": {"spell_id": 5, "damage": 300, "learnt": False, "img": pygame.image.load('../graphics/Spells/water_fury.png')},
+            "Earth Fury": {"spell_id": 6, "damage": 300, "learnt": False, "img": pygame.image.load('../graphics/Spells/earth_fury.png')},
+            "Air Fury": {"spell_id": 7, "damage": 300, "learnt": False, "img": pygame.image.load('../graphics/Spells/air_fury.png')},
         }
 
         ##
@@ -91,6 +92,9 @@ class Player(pygame.sprite.Sprite):
                     learnt_spells.append(self.player_spells[spell]["spell_id"])
 
         return learnt_spells
+
+    def get_player_spells(self):
+        return  self.player_spells
 
 
 # update spell through item use (book)
