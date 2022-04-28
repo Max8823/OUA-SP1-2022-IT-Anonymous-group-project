@@ -15,6 +15,9 @@ item_description = pygame.font.Font('../fonts/Tangerine-Bold.ttf', 45)
 inven_background = pygame.image.load('../graphics/inventory/inven_background.png')
 item_slot = pygame.image.load('../graphics/inventory/item_slot.png')
 
+# EQUIPMENT SLOT IMAGE
+equipment_slot = pygame.image.load('../graphics/inventory/equipment_slot.png')
+
 
 # ITEM DISPLAY
 target_item = 0
@@ -23,6 +26,8 @@ slot_counter = 0
 items_list = []
 equipped_items = []
 
+# equipment slot counter
+currently_equipped = 0
 
 class Inventory:
     def __init__(self):
@@ -46,6 +51,9 @@ class Inventory:
         self.load_img()
         self.inventory_full = False
         self.item_display_up = False
+
+        # equipment slot counter
+        self.currently_equipped = 0
 
 ##############
 
@@ -105,9 +113,19 @@ class Inventory:
 
     def draw_equipment(self):
         global equipped_items
+        equip_poses = []
+        self.screen.blit(equipment_slot, (648, 548))
+        self.screen.blit(equipment_slot, (748, 470))
+        self.screen.blit(equipment_slot, (848, 548))
+        equip_poses.append((500,450))
+        equip_poses.append((748, 470))
+        equip_poses.append((848, 548))
+
+        i = 0
 
         for item in equipped_items:
-            print("do work here")
+            self.screen.blit(equipped_items[i].get_item_info()["img"], equip_poses[i])
+            i += 1
 
 
 
@@ -152,15 +170,33 @@ class Inventory:
 
     def equip_item(self, target_item):
         global equipped_items
+        global currently_equipped
+        # NOTE!! not sure if global should be here
+        global slot_counter
 
         if len(equipped_items) <= 3:
             equipped_items.append(target_item)
-            items_list[target_item].pop()
+            items_list.pop(target_item)
+            currently_equipped += 1
+            slot_counter -= 1
 
         else:
             print("all equipment slots full")
 
+    # Removes equipped item from equipped_items list
+    # and appends it back into item_list
+    def remove_equipped_item(self, target_item):
+        global equipped_items
+        global currently_equipped
+        # NOTE!! not sure if global should be here
+        global items_list
+        # NOTE!! not sure if global should be here
+        global slot_counter
 
+        equipped_items[target_item].pop()
+        items_list.append(target_item)
+        currently_equipped -= 1
+        slot_counter += 1
 
     def get_items_list(self):
         return items_list

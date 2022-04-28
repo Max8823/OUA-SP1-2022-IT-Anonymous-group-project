@@ -89,6 +89,10 @@ class user_interactions():
                     self.camera.set_inven_status(True)
                     self.inventory_open = True
                     self.set_item_info(False)
+                    # TEST lines 93 & 94 adds an axe
+                    # to inventory at start of game.
+                    self.Inventory.add_item(2, 1)
+                    self.set_items(self.Inventory.get_items_list())
 
 
             # this elif will close the item pop-up display if the user does not click on the 'X', requries both inventory and item display to be open
@@ -169,7 +173,11 @@ class user_interactions():
             # if clicked on equip - run equipping method/s
             if self.Inventory.get_second_button() == 1:
                 if self.Inventory.get_display_equip_pos().collidepoint(mouse_pos):
-                    print("equipping item calling goes here")
+                    #self.items_list[self.Inventory.get_target_item()].get_item_code()
+                    if self.items_list[self.Inventory.get_target_item()].get_item_code() == 2:
+                        self.Inventory.equip_item(2)
+                        print("equipping item calling goes here")
+                    #print("equipping item calling goes here")
 
             # if clicked on 'use item' run use item method/s
             elif self.Inventory.get_second_button() == 2:
