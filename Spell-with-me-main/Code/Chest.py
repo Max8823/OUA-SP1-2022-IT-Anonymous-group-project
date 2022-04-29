@@ -19,8 +19,12 @@ class Chest:
         self.pos = self.posX, self.posY
         return self.pos
 
+    # def get_chest_contents(self):
+    #     return self.contents
+
     def get_chest_contents(self):
-        return self.contents
+        loot = (2, 1)
+        return loot
 
     # this is temporary
     def generate_contents(self):

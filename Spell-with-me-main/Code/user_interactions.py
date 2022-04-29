@@ -180,10 +180,12 @@ class user_interactions():
                 self.Inventory.set_item_display_up(False)
                 self.camera.set_item_info_status(False)
 
+
             # if clicked on equip - run equipping method/s
             if self.Inventory.get_second_button() == 1:
                 if self.Inventory.get_display_equip_pos().collidepoint(mouse_pos):
-                    print("equipping item calling goes here")
+                    # remove print
+                    self.Inventory.equip_item(self.items_list[self.Inventory.get_target_item()].get_item_code())
 
             # if clicked on 'use item' run use item method/s
             elif self.Inventory.get_second_button() == 2:

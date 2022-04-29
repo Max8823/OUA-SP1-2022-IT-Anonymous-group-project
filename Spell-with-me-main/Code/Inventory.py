@@ -16,7 +16,7 @@ item_description = pygame.font.Font('../fonts/Tangerine-Bold.ttf', 45)
 inven_background = pygame.image.load('../graphics/inventory/inven_background.png')
 item_slot = pygame.image.load('../graphics/inventory/item_slot.png')
 spell_background = pygame.image.load('../graphics/inventory/Spell_box.png')
-
+equipment_slot = pygame.image.load('../graphics/inventory/equipment_slot.png')
 
 # ITEM DISPLAY
 target_item = 0
@@ -25,6 +25,7 @@ slot_counter = 0
 
 items_list = []
 equipped_items = []
+currently_equipped = 0
 spells = {}
 spells_pos = []
 
@@ -172,14 +173,21 @@ class Inventory:
             earth_fury_rect = spell_slotx-44, spell_sloty+212
             self.set_spell_pos((earth_fury_rect, "Earth Blast"))
 
-
-
-
     def draw_equipment(self):
         global equipped_items
-
+        global currently_equipped
+        equipped_pos = [(648, 548), (748, 470), (848, 548)]
+        # equipment slot 1
+        slot1 = self.screen.blit(equipment_slot, equipped_pos[0])
+        # equipment slot 2
+        slot2 = self.screen.blit(equipment_slot, equipped_pos[1])
+        # equipment slot 3
+        slot3 = self.screen.blit(equipment_slot, equipped_pos[2])
+        i = 0
         for item in equipped_items:
-            print("do work here")
+            #self.screen.blit(equipped_items[i].get_item_info()["img"], (equipped_pos[i]))
+            img1 = equipped_items[i].get_item_info()["img"]
+            self.screen.blit(img1, (equipped_pos[i]))
 
 
     def add_item(self, item_code, qty):
@@ -221,15 +229,31 @@ class Inventory:
 
     def equip_item(self, target_item):
         global equipped_items
+        global currently_equipped
+        global items_list
+        global slot_counter
 
         if len(equipped_items) <= 3:
-            equipped_items.append(target_item)
+            target = items_list[target_item]
+            equipped_items.append(target)
+            #equipped_items.append(items_list[target_item])
             items_list[target_item].pop()
+            currently_equipped += 1
+            slot_counter -= 1
 
         else:
             print("all equipment slots full")
 
+    def remove_equipped_item(self, target_item):
 
+        global equipped_items
+        global currently_equipped
+        global items_list
+        global slot_counter
+        equipped_items.pop(target_item)
+        items_list.append(target_item)
+        currently_equipped -= 1
+        slot_counter += 1
 
     def get_items_list(self):
         return items_list
