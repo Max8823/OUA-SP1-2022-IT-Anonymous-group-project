@@ -184,10 +184,10 @@ class Inventory:
         # equipment slot 3
         slot3 = self.screen.blit(equipment_slot, equipped_pos[2])
         i = 0
+
         for item in equipped_items:
-            #self.screen.blit(equipped_items[i].get_item_info()["img"], (equipped_pos[i]))
-            img1 = equipped_items[i].get_item_info()["img"]
-            self.screen.blit(img1, (equipped_pos[i]))
+            img1 = equipped_items[i].get_item_img()
+            self.screen.blit(img1, (equipped_pos[i][0]+5, equipped_pos[i][1]+5))
 
 
     def add_item(self, item_code, qty):
@@ -226,21 +226,22 @@ class Inventory:
         item_header_text_rect = item_header_text.get_rect()
         item_header_text_rect.center = (self.screen.get_width() // 2, 75)
 
-
     def equip_item(self, target_item):
         global equipped_items
         global currently_equipped
         global items_list
         global slot_counter
 
-        if len(equipped_items) <= 3:
-            target = items_list[target_item]
-            equipped_items.append(target)
-            #equipped_items.append(items_list[target_item])
-            items_list[target_item].pop()
+        if currently_equipped <= 3:
+
+            print("target_item", target_item)
+            item = Item(target_item, 1, (0, 0))
+            idx = items_list.index(target_item)
+            equipped_items.append(item)
+            items_list.pop(idx)
+
             currently_equipped += 1
             slot_counter -= 1
-
         else:
             print("all equipment slots full")
 

@@ -19,12 +19,16 @@ class Chest:
         self.pos = self.posX, self.posY
         return self.pos
 
-    # def get_chest_contents(self):
-    #     return self.contents
-
     def get_chest_contents(self):
-        loot = (2, 1)
-        return loot
+        return self.contents
+
+    # This is a test function we can tweak
+    # to force a particular item from a chest
+    # original function returns self.contents
+    # on line #22
+    # def get_chest_contents(self):
+    #     loot = (2, 1)
+    #     return loot
 
     # this is temporary
     def generate_contents(self):
