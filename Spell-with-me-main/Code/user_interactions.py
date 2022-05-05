@@ -254,7 +254,7 @@ class user_interactions():
             if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
                                 sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))), self.enemies[i].enemy_pos)) <= 64:
 
-                self.battle.set_battle(self.player, self.enemies[i])
+                self.battle.set_battle(self.player, self.enemies[i], self.camera.get_map())
                 self.in_battle = True
                 self.battle.set_battle_status(True)
 
@@ -266,7 +266,6 @@ class user_interactions():
                         self.in_battle = False
                         self.Inventory.add_item(self.battle.get_battle_loot()[0], self.battle.get_battle_loot()[1])
                         self.set_items(self.Inventory.get_items_list())
-
 
                     else:
                         pygame.sprite.Sprite.kill(self.player)
@@ -310,7 +309,6 @@ class user_interactions():
                 self.Inventory.set_spell_display_up(True)
                 self.set_spell_info(True)
                 MatchFound = True
-
 
             else:
                 i += 1

@@ -76,7 +76,7 @@ class Level:
             if play_button_rect.collidepoint(mouse_pos):
 
                 self.play = True
-                self.load_map(0, 0)
+                self.load_map(0)
                 # import loading_screen
 
 
@@ -169,6 +169,7 @@ class Camera(pygame.sprite.Group):
         super().__init__()
         self.battle = battle()
         self.Inventory = Inventory()
+        self.map = int
 
         self.display_surface = pygame.display.get_surface()
         self.half_width = self.display_surface.get_size()[0] / 2
@@ -180,7 +181,9 @@ class Camera(pygame.sprite.Group):
 
     def set_map(self, map):
 
+        self.map = map
         if map == 0:
+
             self.floor_surf = pygame.image.load('../graphics/maps/Map0.png').convert()
             self.floor_rect = self.floor_surf.get_rect(topleft=(576, 320))
 
@@ -191,6 +194,11 @@ class Camera(pygame.sprite.Group):
 
         else:
             print("3rd map here")
+
+
+    def get_map(self):
+        return self.map
+
 
     # passing the map offset which is calculated by dividing the map x,y /2 respectively and putting them into a Vector (x:y) ^^
     def get_offset(self):

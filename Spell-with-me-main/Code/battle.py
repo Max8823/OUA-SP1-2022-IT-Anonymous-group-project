@@ -18,12 +18,12 @@ class battle:
         self.loot = None
         self.turn = 'player'
         self.result = False
-        self.map0_background = pygame.image.load('../graphics/maps/0/Forest_Fight.png').convert_alpha()
+        self.map0_background = pygame.image.load('../graphics/maps/0/battle_scene.png').convert_alpha()
 
 
         self.screen = pygame.display.get_surface()
 
-    def set_battle(self, player1, enemy1):
+    def set_battle(self, player1, enemy1, map_code):
         global player, enemy
 
         player = player1
