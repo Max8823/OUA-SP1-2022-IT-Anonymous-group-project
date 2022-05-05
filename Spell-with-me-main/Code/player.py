@@ -55,18 +55,10 @@ class Player(pygame.sprite.Sprite):
         self.health_ratio = self.player_max_health / self.health_bar_length
         self.change_speed = 1
 
-        # def select_question(self):
+
 
         question_num = random.randrange(0, 5)
-        # for i in self.questions:
 
-    # def get_questions_list(self, spell_id):
-    # if spell_id == 0:
-    #
-    # elif...9
-    # return questions
-
-#health bar display
 
 
     def draw_player_health(self):
@@ -78,6 +70,7 @@ class Player(pygame.sprite.Sprite):
 
         health_bar_width = int(self.player_current_health / self.health_ratio)
         health_bar = pygame.Rect(10, 45, health_bar_width, 25)
+        #add text - number
         pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), health_bar)
 
 

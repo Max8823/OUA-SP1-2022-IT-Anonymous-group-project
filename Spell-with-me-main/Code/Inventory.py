@@ -26,6 +26,7 @@ slot_counter = 0
 items_list = []
 equipped_items = []
 currently_equipped = 0
+equipped_pos = []
 spells = {}
 spells_pos = []
 
@@ -54,6 +55,7 @@ class Inventory:
         self.inventory_full = False
         self.item_display_up = False
         self.spell_display_up = False
+        self.equip_display_up = False
 
 ##############
 
@@ -186,8 +188,10 @@ class Inventory:
         i = 0
         for item in equipped_items:
             #self.screen.blit(equipped_items[i].get_item_info()["img"], (equipped_pos[i]))
-            img1 = equipped_items[i].get_item_info()["img"]
-            self.screen.blit(img1, (equipped_pos[i]))
+            img1 = equipped_items[i].get_item_img()
+            self.screen.blit(img1, (equipped_pos[i][0]+5, equipped_pos[i][1]+5))
+
+            self.set_equipped_items_pos((equipped_pos[i][0]+5, equipped_pos[i][1]+5))
 
 
     def add_item(self, item_code, qty):
@@ -233,11 +237,17 @@ class Inventory:
         global items_list
         global slot_counter
 
-        if len(equipped_items) <= 3:
-            target = items_list[target_item]
-            equipped_items.append(target)
-            #equipped_items.append(items_list[target_item])
-            items_list[target_item].pop()
+
+        if currently_equipped <= 3:
+
+
+            idx = items_list.index(target_item)
+            item = Item(items_list[idx].get_item_code(), 1, (0,0))
+
+            equipped_items.append(item)
+            items_list.pop(idx)
+
+
             currently_equipped += 1
             slot_counter -= 1
 
@@ -245,18 +255,24 @@ class Inventory:
             print("all equipment slots full")
 
     def remove_equipped_item(self, target_item):
-
         global equipped_items
         global currently_equipped
         global items_list
         global slot_counter
-        equipped_items.pop(target_item)
-        items_list.append(target_item)
+
+        idx = equipped_items.index(target_item)
+        item = Item(equipped_items[idx].get_item_code(), 1, (0,0))
+        items_list.append(item)
+        equipped_items.pop(idx)
+
         currently_equipped -= 1
         slot_counter += 1
 
     def get_items_list(self):
         return items_list
+
+    def get_equipped_items(self):
+        return equipped_items
 
     def get_inventory_full(self):
         return self.inventory_full
@@ -303,6 +319,14 @@ class Inventory:
     def get_spell_display_up(self):
         return  self.spell_display_up
 
+    def set_equip_display_up(self, status):
+        self.equip_display_up = status
+
+    def get_equip_display_up(self):
+        return self.equip_display_up
+
+
+
     def set_spell_pos(self, spell):
         global spells_pos
 
@@ -315,6 +339,17 @@ class Inventory:
         global spells_pos
 
         return spells_pos
+
+    def set_equipped_items_pos(self, pos):
+        global equipped_pos
+
+        if currently_equipped <= 2:
+            equipped_pos.append(pos)
+
+    def get_equipped_items_pos(self):
+        global equipped_pos
+
+        return equipped_pos
 
 
     def draw_spell_info(self):
@@ -349,6 +384,7 @@ class Inventory:
     def draw_item_info(self):
         global target_item
         i = target_item
+
 
         if items_list:
 
@@ -412,6 +448,66 @@ class Inventory:
                     self.set_display_use_item_pos(item_display_use_item_rect)
                     self.set_second_button(2)
 
+
+
+    def draw_equip_info(self):
+        global target_item
+        i = target_item
+
+        if equipped_items:
+
+            if i is not None:
+                item_name = equipped_items[i].get_item_info()["item_name"]
+                item_header_text = item_header.render(item_name, False, (255, 0, 0))
+
+                item_descrip = equipped_items[i].get_item_info()["descrip"]
+                item_descrip_text = item_description.render(item_descrip, False, (0, 0, 0))
+
+                # background for the item information
+                item_background_rect = self.item_background.get_rect()
+                # this will make the item info background appear in the center of the screen
+                item_background_rect.center = (self.screen.get_width() // 2, self.screen.get_height() // 2)
+                self.screen.blit(self.item_background, item_background_rect)
+
+                # item name + line below
+                item_header_text_rect = item_header_text.get_rect()
+                item_header_text_rect.center = (item_background_rect.center[0], item_background_rect.center[1] - 300)
+                self.screen.blit(item_header_text, item_header_text_rect)
+                pygame.draw.line(self.screen, (255, 0, 0),
+                                 (item_header_text_rect[0], item_header_text_rect.center[1] + 50),
+                                 (item_header_text_rect.right, item_header_text_rect.center[1] + 50), 3)
+
+                # item image + line below
+                item_image_rect = equipped_items[i].get_item_info()["img"].get_rect()
+                item_image_rect.center = (item_background_rect.center[0], item_background_rect.center[1] - 100)
+                self.screen.blit(equipped_items[i].get_item_info()["img"], item_image_rect)
+                pygame.draw.line(self.screen, (255, 0, 0), (item_header_text_rect[0], item_image_rect.center[1] + 150),
+                                 (item_header_text_rect.right, item_image_rect.center[1] + 150), 3)
+
+                # description text
+                item_descrip_rect = item_descrip_text.get_rect()
+                item_descrip_rect.center = (item_background_rect.center[0], item_background_rect.center[1] + 100)
+                self.screen.blit(item_descrip_text, item_descrip_rect)
+
+                # setting cancel button, which will close the pop-up
+                item_display_cancel_rect = self.item_display_cancel.get_rect()
+                item_display_cancel_rect.center = (
+                item_background_rect.center[0] - 150, item_background_rect.center[1] + 200)
+                self.screen.blit(self.item_display_cancel, item_display_cancel_rect)
+                # setting cancel pos
+                self.set_display_cancel(item_display_cancel_rect)
+
+                item_display_unequip_rect = self.item_display_unequip.get_rect()
+                item_display_unequip_rect.center = (
+                    item_background_rect.center[0] + 150, item_background_rect.center[1] + 200)
+                self.screen.blit(self.item_display_unequip, item_display_unequip_rect)
+                # setting use item pos
+                self.set_display_unequip_pos(item_display_unequip_rect)
+                self.set_second_button(2)
+
+
+
+
             # following getters and setters are used / called when clicking on the item display 'icons'
 
     def set_second_button(self, type):
@@ -432,6 +528,11 @@ class Inventory:
     def get_display_equip_pos(self):
         return self.equip_pos
 
+    def set_display_unequip_pos(self, unequip_pos):
+        self.unequip_pos = unequip_pos
+
+    def get_display_unequip_pos(self):
+        return self.unequip_pos
 
     def set_display_use_item_pos(self, use_item_pos):
         self.use_item_pos = use_item_pos
@@ -453,6 +554,9 @@ class Inventory:
         self.item_display_use_item = pygame.image.load(
             '../graphics/inventory/item_display_use_item.png').convert_alpha()
         self.item_display_use_item.set_alpha(225)
+
+        self.item_display_unequip = pygame.image.load('../graphics/inventory/Item_display_un-equip.png').convert_alpha()
+        self.item_display_unequip.set_alpha(225)
 
 
         #

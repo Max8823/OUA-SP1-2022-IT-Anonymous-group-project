@@ -18,6 +18,7 @@ from random import choice, randint
 inven_open = False
 item_info = False
 spell_info = False
+equip_info = False
 
 
 
@@ -45,8 +46,8 @@ class Level:
         self.loaded = False
 
         # creating the map
-        self.visible_sprites.set_map(0)
-        self.load_map(0, 0)
+
+
 
     def start_screen(self):
         if not self.loaded_img:
@@ -75,6 +76,7 @@ class Level:
             if play_button_rect.collidepoint(mouse_pos):
 
                 self.play = True
+                self.load_map(0, 0)
                 # import loading_screen
 
 
@@ -92,9 +94,9 @@ class Level:
         self.instructions_button = pygame.image.load('../graphics/start_screen/Instructions.png').convert_alpha()
         self.loaded_img = True
 
-    def load_map(self, map, map_code):
+    def load_map(self, map_code):
         # background here
-
+        self.visible_sprites.set_map(map_code)
         map_objects = {
             'filler': load_csv_layout('../graphics/maps/' + str(map_code) + '/map_filler.csv'),
             'boundaries': load_csv_layout('../graphics/maps/' + str(map_code) + '/map_boundaries.csv'),
@@ -210,6 +212,11 @@ class Camera(pygame.sprite.Group):
 
         spell_info = status
 
+    def set_equip_info_status(self, status):
+        global equip_info
+
+        equip_info = status
+
     # includes drawing inventory
     def draw_all(self, player):
         # getting the offset
@@ -230,6 +237,11 @@ class Camera(pygame.sprite.Group):
                     self.draw_sprites()
                     self.Inventory.draw_inven()
                     self.Inventory.draw_spell_info()
+
+                elif equip_info:
+                    self.draw_sprites()
+                    self.Inventory.draw_inven()
+                    self.Inventory.draw_equip_info()
 
                 else:
                     self.draw_sprites()

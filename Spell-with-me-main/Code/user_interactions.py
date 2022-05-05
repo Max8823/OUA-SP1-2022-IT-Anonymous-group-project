@@ -17,6 +17,7 @@ class user_interactions():
         self.camera = level.Camera()
         self.player = object
         self.items_list = []
+        self.equipped_items = []
         self.chests = []
         self.enemies = []
         self.in_battle = False
@@ -28,6 +29,7 @@ class user_interactions():
         # referencing level,
         self.level = level.Level
         self.spells_pos = self.Inventory.get_spell_pos()
+        self.equipped_items_pos = self.Inventory.get_equipped_items_pos()
 
     # used to pull chests into this class, preventing circular import
     def set_chest_list(self, chests):
@@ -44,6 +46,12 @@ class user_interactions():
 
         for items in items_list:
             self.items_list.append(items)
+
+    def set_equipped_items(self, equipped_items):
+        self.equipped_items = list()
+
+        for items in equipped_items:
+            self.equipped_items.append(items)
 
     def set_enemies(self, enemies):
         for enemy in enemies:
@@ -64,6 +72,9 @@ class user_interactions():
     def set_spell_info(self, status):
         self.camera.set_spell_info_status(status)
 
+    def set_equip_info(self, status):
+        self.camera.set_equip_info_status(status)
+
     def set_loaded(self, set):
         self.loaded = set
 
@@ -83,9 +94,6 @@ class user_interactions():
                 self.in_battle = False
                 self.Inventory.add_item(self.battle.get_battle_loot()[0], self.battle.get_battle_loot()[1])
                 self.set_items(self.Inventory.get_items_list())
-
-
-
 
             if not self.inventory_open:
                 if key[pygame.K_i]:
@@ -161,7 +169,6 @@ class user_interactions():
                 self.check_mouse_click_left(pygame.mouse.get_pos())
 
             if pygame.mouse.get_pressed()[2]:
-
                 mouse_pos = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
                 self.check_mouse_click_right(mouse_pos)
 
@@ -173,26 +180,45 @@ class user_interactions():
                                self.get_offset()[1]
             self.check_chests(mouse_pos_actual)
 
-        if self.inventory_open and self.Inventory.get_item_display_up():
+        if self.inventory_open and self.Inventory.get_equip_display_up():
+
+            if self.Inventory.get_cancel_pos().collidepoint(mouse_pos):
+                self.Inventory.set_equip_display_up(False)
+                self.camera.set_equip_info_status(False)
+
+            if self.Inventory.get_display_unequip_pos().collidepoint(mouse_pos):
+                self.Inventory.set_equip_display_up(False)
+                self.camera.set_equip_info_status(False)
+                self.Inventory.remove_equipped_item(self.equipped_items[self.Inventory.get_target_item()])
+
+                self.set_equipped_items(self.Inventory.get_equipped_items())
+                self.set_items(self.Inventory.get_items_list())
+
+
+        elif self.inventory_open and self.Inventory.get_item_display_up():
 
             # if clicked on cancel, close item display, from Camera and the tracker here
             if self.Inventory.get_cancel_pos().collidepoint(mouse_pos):
                 self.Inventory.set_item_display_up(False)
                 self.camera.set_item_info_status(False)
 
-
             # if clicked on equip - run equipping method/s
             if self.Inventory.get_second_button() == 1:
                 if self.Inventory.get_display_equip_pos().collidepoint(mouse_pos):
                     # remove print
-                    self.Inventory.equip_item(self.items_list[self.Inventory.get_target_item()].get_item_code())
+                    self.Inventory.set_item_display_up(False)
+                    self.camera.set_item_info_status(False)
+                    self.Inventory.equip_item(self.items_list[self.Inventory.get_target_item()])
+
+                    self.set_equipped_items(self.Inventory.get_equipped_items())
+                    self.set_items(self.Inventory.get_items_list())
+
 
             # if clicked on 'use item' run use item method/s
             elif self.Inventory.get_second_button() == 2:
 
                 ############
                 if self.Inventory.get_display_use_item_pos().collidepoint(mouse_pos):
-
 
                     if self.items_list[self.Inventory.get_target_item()].get_item_code() == 0:
                         self.player.heal_player(100)
@@ -209,9 +235,20 @@ class user_interactions():
                         spells = self.player.get_player_spells()
                         self.Inventory.set_spells(spells)
 
+    def check_mouse_click_right(self, mouse_pos):
+
+        if self.inventory_open and not self.Inventory.get_item_display_up() and not self.Inventory.get_spell_display_up() and not self.Inventory.get_equip_display_up():
+            if mouse_pos[0] < 600:
+                self.get_spell_display(mouse_pos)
+            else:
+                if mouse_pos[1] < 460:
+                    self.get_item_display(mouse_pos)
+                else:
+                    self.get_equipped_display(mouse_pos)
+
     def check_for_enemies(self):
 
-        i=0
+        i = 0
         for enemy in self.enemies:
 
             if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
@@ -234,24 +271,32 @@ class user_interactions():
                     else:
                         pygame.sprite.Sprite.kill(self.player)
 
-
-
-
             else:
                 i += 1
                 self.in_battle = False
 
-    def check_mouse_click_right(self, mouse_pos):
+    def get_equipped_display(self, mouse_pos):
+        i = 0
 
-        if self.inventory_open and not self.Inventory.get_item_display_up() and not self.Inventory.get_spell_display_up():
-            if not self.get_item_display(mouse_pos):
-                self.get_spell_display(mouse_pos)
+        for item in self.equipped_items_pos:
+            pos = self.equipped_items_pos[i]
+            posx = pos[0]
+            posy = pos[1]
 
+            if abs((((((posx + 55) - posx) / 2) + posx) - mouse_pos[0])) <= 30 and abs(
+                    (((((posy + 55) - posy) / 2) + posy) - mouse_pos[1])) <= 30:
 
+                self.Inventory.set_target_item(i)
+                self.Inventory.draw_equip_info()
+                self.Inventory.set_equip_display_up(True)
+                self.set_equip_info(True)
+
+            else:
+                i += 1
 
     def get_spell_display(self, mouse_pos):
-
-        i=0
+        MatchFound = False
+        i = 0
         for spell in self.spells_pos:
             pos = self.spells_pos[i][0]
             posx = pos[0]
@@ -264,15 +309,16 @@ class user_interactions():
                 self.Inventory.draw_spell_info()
                 self.Inventory.set_spell_display_up(True)
                 self.set_spell_info(True)
+                MatchFound = True
 
 
             else:
-                i+=1
+                i += 1
 
+        return MatchFound
 
     def get_item_display(self, mouse_pos):
         i = 0
-        spells_pos = self.Inventory.get_spell_pos()
         MatchFound = False
 
         for items in self.items_list:
@@ -295,6 +341,7 @@ class user_interactions():
                 i += 1
 
         return MatchFound
+
     # checking all the chests on the current map
     def check_chests(self, mouse_pos):
 
