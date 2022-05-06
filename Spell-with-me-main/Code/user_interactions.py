@@ -5,7 +5,8 @@ import math
 
 from Inventory import Inventory
 from battle import battle
-import level
+from level import *
+from portal import *
 from math import *
 
 
@@ -14,7 +15,6 @@ class user_interactions():
 
         self.keys = pygame.key.get_pressed()
         self.Inventory = Inventory()
-        self.camera = level.Camera()
         self.player = object
         self.items_list = []
         self.equipped_items = []
@@ -28,6 +28,9 @@ class user_interactions():
 
         # referencing level,
         self.level = level.Level
+        self.Camera = level.Camera
+        self.portal = level.Portal()
+        self.get_map = self.level.Camera.get_map()
         self.spells_pos = self.Inventory.get_spell_pos()
         self.equipped_items_pos = self.Inventory.get_equipped_items_pos()
 
@@ -273,6 +276,32 @@ class user_interactions():
             else:
                 i += 1
                 self.in_battle = False
+
+    def change_map_level(self):
+
+        if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
+                            sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))), self.portal.get_position())) <= 32:
+
+            if self.get_map == 0:
+
+                self.Camera.set_map(1)
+                self.level.load_map(1)
+                self.Inventory.temporary_inventory()
+
+                if self.get_map == 1:
+                    self.Inventory.switch_to_original_inven()
+
+            elif self.get_map == 1:
+
+                self.Camera.set_map(2)
+                self.level.load_map(2)
+                self.Inventory.temporary_inventory()
+
+                if self.get_map == 2:
+                    self.Inventory.switch_to_original_inven()
+
+            else:
+                print('placeholder')
 
     def get_equipped_display(self, mouse_pos):
         i = 0

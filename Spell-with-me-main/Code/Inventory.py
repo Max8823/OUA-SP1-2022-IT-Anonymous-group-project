@@ -30,6 +30,11 @@ equipped_pos = []
 spells = {}
 spells_pos = []
 
+# TEMPORARY VARIABLES FOR SWITCHING MAPS
+items_list_temp = []
+equipped_items_temp = []
+slot_counter_temp = 0
+currently_equipped_temp = 0
 
 
 class Inventory:
@@ -267,6 +272,40 @@ class Inventory:
 
         currently_equipped -= 1
         slot_counter += 1
+
+    # transfers current inventory and equipment slots to temporary holders
+    def temporary_inventory(self):
+
+        global items_list_temp
+        global equipped_items_temp
+        global slot_counter_temp
+        global currently_equipped_temp
+        global items_list
+        global equipped_items
+        global slot_counter
+        global currently_equipped
+
+        items_list_temp = items_list[:]
+        equipped_items_temp = equipped_items[:]
+        slot_counter_temp = slot_counter
+        currently_equipped_temp = currently_equipped
+
+    # transfers temporary lists back to original
+    def switch_to_original_inven(self):
+
+        global items_list_temp
+        global equipped_items_temp
+        global slot_counter_temp
+        global currently_equipped_temp
+        global items_list
+        global equipped_items
+        global slot_counter
+        global currently_equipped
+
+        items_list = items_list_temp[:]
+        equipped_items = equipped_items_temp[:]
+        slot_counter = slot_counter_temp
+        currently_equipped = currently_equipped_temp
 
     def get_items_list(self):
         return items_list

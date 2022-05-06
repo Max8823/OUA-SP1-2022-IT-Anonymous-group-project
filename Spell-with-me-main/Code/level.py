@@ -19,6 +19,7 @@ inven_open = False
 item_info = False
 spell_info = False
 equip_info = False
+map_loaded = False
 
 
 
@@ -95,6 +96,7 @@ class Level:
         self.loaded_img = True
 
     def load_map(self, map_code):
+        global map_loaded
         # background here
         self.visible_sprites.set_map(map_code)
         map_objects = {
@@ -126,6 +128,11 @@ class Level:
                             if col == 'c':
                                 Tile((x, y), [self.visible_sprites, self.chest_sprites, self.obstacle_sprites], 'chest')
                                 self.chests.append(Chest(x, y))
+
+                            elif col == 'g':
+                                Tile((x, y), [self.visible_sprites, self.portal_sprites, self.obstacle_sprites],
+                                     'portal')
+                                self.portal((x, y), map_code)
 
                             else:
                                 surf = images['objects'][int(col)]
@@ -271,3 +278,14 @@ class Camera(pygame.sprite.Group):
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
+
+class Portal:
+
+    def __init__(self, pos, map_code):
+
+        self.pos = pos
+        self.map_code = map_code
+
+    def get_position(self):
+
+        return self.pos

@@ -23,6 +23,11 @@ class Tile(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(center=pos)
             self.hitbox = self.rect.inflate(-20, -20)
 
+        elif sprite_type == 'portal':
+            self.portal_image = pygame.image.load('..').convert_alpha()
+            self.rect = self.image.get_rect(center=pos)
+            self.hitbox = self.rect.inflate(-20, -20)
+
         else:
             self.rect = self.image.get_rect(topleft=pos)
             self.hitbox = self.rect.inflate(0, y_offset)
