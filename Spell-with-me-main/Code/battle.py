@@ -28,6 +28,7 @@ class battle:
 
         player = player1
         enemy = enemy1
+        self.map_code = map_code
 
     def set_battle_status(self, status):
         global battle_status

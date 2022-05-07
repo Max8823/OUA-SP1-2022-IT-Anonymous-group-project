@@ -26,9 +26,9 @@ class user_interactions():
         self.loaded = False
 
         # referencing level,
-        #self.level = level.Level
-        #self.Camera = level.Camera
-        #self.get_map = self.Camera.get_map()
+        self.level = level
+        self.camera = level.Camera()
+        self.map_num = None
         self.spells_pos = self.Inventory.get_spell_pos()
         self.equipped_items_pos = self.Inventory.get_equipped_items_pos()
 
@@ -64,6 +64,7 @@ class user_interactions():
 
     # pulling offset from level
     def get_offset(self):
+
         return self.offset
 
     # sending this bool variable to the Camera class in the 'Level' Class file so thye extra item information can be displayed
@@ -81,6 +82,13 @@ class user_interactions():
 
     def get_loaded(self):
         return self.loaded
+
+    def set_map_num(self, map_num):
+        self.map_num = map_num
+
+    def get_map_num(self):
+        return self.map_num
+
 
     def key_pressed(self, key):
 
@@ -255,7 +263,7 @@ class user_interactions():
             if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
                                 sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))), self.enemies[i].enemy_pos)) <= 64:
 
-                self.battle.set_battle(self.player, self.enemies[i], self.camera.get_map())
+                self.battle.set_battle(self.player, self.enemies[i], self.get_map_num())
                 self.in_battle = True
                 self.battle.set_battle_status(True)
 

@@ -22,7 +22,6 @@ equip_info = False
 map_loaded = False
 
 
-
 class Level:
     def __init__(self):
 
@@ -47,8 +46,6 @@ class Level:
         self.loaded = False
 
         # creating the map
-
-
 
     def start_screen(self):
         if not self.loaded_img:
@@ -151,6 +148,8 @@ class Level:
         self.user_action.set_chest_list(self.chests)
         self.user_action.set_player(self.player)
         self.user_action.set_enemies(self.enemies)
+        #passing map_code to 'user - interactions class'
+        self.user_action.set_map_num(map_code)
 
     def run(self):
 
@@ -164,6 +163,7 @@ class Level:
             self.keys = pygame.key.get_pressed()
             self.user_action.key_pressed(self.keys)
             self.user_action.set_offset(self.visible_sprites.get_offset())
+
 
             if not self.user_action.get_loaded():
                 self.user_action.set_loaded(True)
@@ -182,19 +182,16 @@ class Camera(pygame.sprite.Group):
         self.half_width = self.display_surface.get_size()[0] / 2
         self.half_height = self.display_surface.get_size()[1] / 2
         self.offset = pygame.math.Vector2()
-        
 
+    def set_map(self, map_num):
 
-
-    def set_map(self, map):
-
-        self.map = map
-        if map == 0:
+        self.map_num = map_num
+        if map_num == 0:
 
             self.floor_surf = pygame.image.load('../graphics/maps/Map0.png').convert()
             self.floor_rect = self.floor_surf.get_rect(topleft=(576, 320))
 
-        elif map == 1:
+        elif map_num == 1:
             print("2nd map here")
             self.floor_surf = pygame.image.load('../graphics/maps/Map1.png').convert()
             self.floor_rect = self.floor_surf.get_rect(topleft=(576, 320))
@@ -202,10 +199,9 @@ class Camera(pygame.sprite.Group):
         else:
             print("3rd map here")
 
+    def get_map_num(self):
 
-    def get_map(self):
-        return self.map
-
+        return self.map_num
 
     # passing the map offset which is calculated by dividing the map x,y /2 respectively and putting them into a Vector (x:y) ^^
     def get_offset(self):
@@ -266,9 +262,6 @@ class Camera(pygame.sprite.Group):
         else:
             self.battle.draw_battle()
 
-
-
-
     # draws map sprites only, no inventory stuff drawn here
     def draw_sprites(self):
 
@@ -279,13 +272,12 @@ class Camera(pygame.sprite.Group):
             offset_pos = sprite.rect.topleft - self.offset
             self.display_surface.blit(sprite.image, offset_pos)
 
+
 class Portal:
 
     def __init__(self, pos, map_code):
-
         self.pos = pos
         self.map_code = map_code
 
     def get_position(self):
-
         return self.pos
