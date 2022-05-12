@@ -20,32 +20,32 @@ class Item:
 
         elif self.item_code == 1:
 
-            self.image = pygame.image.load('../graphics/items/small/green_potion.png').convert_alpha()
+            self.image = pygame.image.load('../graphics/items/small/ring.png').convert_alpha()
             self.rect = self.image.get_rect(center=(0, 0))
-            self.image_large = pygame.image.load('../graphics/items/large/green_potion_large.png').convert_alpha()
+            self.image_large = pygame.image.load('../graphics/items/large/ring_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "ENERGY POTION", "descrip": "restores some energy", "equip": False,
-                         "consume": True, "img": self.image_large}
+            self.info = {"item_name": "Blue crystal ring", "descrip": "you feel stronger holding this in your hands...", "equip": True,
+                         "consume": False, "img": self.image_large, "magic_pwr": 0.25}
 
 
         elif self.item_code == 2:
 
-            self.image = pygame.image.load('../graphics/items/small/axe1.png').convert_alpha()
+            self.image = pygame.image.load('../graphics/items/small/staff.png').convert_alpha()
             self.rect = self.image.get_rect(center=(0, 0))
-            self.image_large = pygame.image.load('../graphics/items/large/axe1_large.png').convert_alpha()
+            self.image_large = pygame.image.load('../graphics/items/large/staff_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "AXE", "descrip": "i could use this...", "equip": True, "consume": False,
-                         "img": self.image_large}
+            self.info = {"item_name": "Forest staff", "descrip": "This weapon holds the power of the forest", "equip": True, "consume": False,
+                         "img": self.image_large, "magic_pwr": 0.25}
 
 
         elif self.item_code == 3:
 
-            self.image = pygame.image.load('../graphics/items/small/blue_potion.png').convert_alpha()
+            self.image = pygame.image.load('../graphics/items/small/necklace.png').convert_alpha()
             self.rect = self.image.get_rect(center=(0, 0))
-            self.image_large = pygame.image.load('../graphics/items/large/blue_potion_large.png').convert_alpha()
+            self.image_large = pygame.image.load('../graphics/items/large/necklace_large.png').convert_alpha()
             self.image_large.set_alpha(175)
-            self.info = {"item_name": "MANA POTION", "descrip": "restores some mana", "equip": False, "consume": True,
-                         "img": self.image_large}
+            self.info = {"item_name": "Castle guards necklace", "descrip": "a castle guards necklace", "equip": True, "consume": False,
+                         "img": self.image_large, "magic_pwr": 0.25}
 
 
         elif self.item_code == 4:
@@ -81,9 +81,9 @@ class Item:
         # also updated description.
         elif self.item_code == 7:
 
-            self.image = pygame.image.load('../graphics/items/small/sword1.png').convert_alpha()
+            self.image = pygame.image.load('../graphics/items/small/book4.png').convert_alpha()
             self.rect = self.image.get_rect(center=(0, 0))
-            self.image_large = pygame.image.load('../graphics/items/large/sword1_large.png').convert_alpha()
+            self.image_large = pygame.image.load('../graphics/items/large/book4_large.png').convert_alpha()
             self.image_large.set_alpha(175)
             self.info = {"item_name": "Air Fury", "descrip": "consume to learn Air Fury", "equip": False, "consume": True,
                          "img": self.image_large}

@@ -200,8 +200,7 @@ class user_interactions():
                 self.camera.set_equip_info_status(False)
                 self.Inventory.remove_equipped_item(self.equipped_items[self.Inventory.get_target_item()])
 
-                self.set_equipped_items(self.Inventory.get_equipped_items())
-                self.set_items(self.Inventory.get_items_list())
+                self.update_inventory()
 
 
         elif self.inventory_open and self.Inventory.get_item_display_up():
@@ -218,10 +217,7 @@ class user_interactions():
                     self.Inventory.set_item_display_up(False)
                     self.camera.set_item_info_status(False)
                     self.Inventory.equip_item(self.items_list[self.Inventory.get_target_item()])
-
-                    self.set_equipped_items(self.Inventory.get_equipped_items())
-                    self.set_items(self.Inventory.get_items_list())
-
+                    self.update_inventory()
 
             # if clicked on 'use item' run use item method/s
             elif self.Inventory.get_second_button() == 2:
@@ -232,10 +228,12 @@ class user_interactions():
                     if self.items_list[self.Inventory.get_target_item()].get_item_code() == 0:
                         self.player.heal_player(100)
                         self.Inventory.consume_item()
+                        self.update_inventory()
 
                     elif self.items_list[self.Inventory.get_target_item()].get_item_code() == 8:
                         self.player.increase_max_health()
                         self.Inventory.consume_item()
+                        self.update_inventory()
 
                     elif self.items_list[self.Inventory.get_target_item()].get_item_code() in range(4, 8, 1):
                         self.player.update_spell(self.items_list[self.Inventory.get_target_item()].get_item_name(),
@@ -243,6 +241,11 @@ class user_interactions():
                         self.Inventory.consume_item()
                         spells = self.player.get_player_spells()
                         self.Inventory.set_spells(spells)
+                        self.update_inventory()
+
+    def update_inventory(self):
+        self.set_equipped_items(self.Inventory.get_equipped_items())
+        self.set_items(self.Inventory.get_items_list())
 
     def check_mouse_click_right(self, mouse_pos):
 
@@ -254,6 +257,7 @@ class user_interactions():
                     self.get_item_display(mouse_pos)
                 else:
                     self.get_equipped_display(mouse_pos)
+
 
     def check_for_enemies(self):
 

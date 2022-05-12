@@ -83,7 +83,6 @@ class Player(pygame.sprite.Sprite):
             if self.player_spells[spell]["learnt"]:
                 if self.player_spells[spell]["spell_id"] >= 4:
                     learnt_spells.append(self.player_spells[spell]["spell_id"])
-
         return learnt_spells
 
     def get_player_spells(self):
@@ -106,6 +105,9 @@ class Player(pygame.sprite.Sprite):
 # increasing the maximum health for the player by 100 - used when using the 'health boost' item
     def increase_max_health(self):
         self.player_max_health += 100
+
+    def get_current_health(self):
+        return self.player_current_health
 
 
 #loading the player animations

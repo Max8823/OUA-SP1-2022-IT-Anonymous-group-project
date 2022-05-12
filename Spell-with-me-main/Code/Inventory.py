@@ -245,14 +245,10 @@ class Inventory:
 
         if currently_equipped <= 3:
 
-
             idx = items_list.index(target_item)
             item = Item(items_list[idx].get_item_code(), 1, (0,0))
-
             equipped_items.append(item)
             items_list.pop(idx)
-
-
             currently_equipped += 1
             slot_counter -= 1
 
@@ -535,6 +531,7 @@ class Inventory:
                 self.screen.blit(self.item_display_cancel, item_display_cancel_rect)
                 # setting cancel pos
                 self.set_display_cancel(item_display_cancel_rect)
+
 
                 item_display_unequip_rect = self.item_display_unequip.get_rect()
                 item_display_unequip_rect.center = (

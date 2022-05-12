@@ -179,7 +179,7 @@ class Enemy(pygame.sprite.Sprite):
         return self.enemy_name
 
     def get_enemy_health(self):
-        return self.health
+        return self.enemy_health
 
     def set_enemy_health(self, value):
         self.health = value
