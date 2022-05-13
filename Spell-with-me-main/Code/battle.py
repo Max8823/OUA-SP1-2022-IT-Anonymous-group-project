@@ -169,7 +169,7 @@ class battle:
                 text_surface, rect = font.render(str("Casting " + str(current_spell)), (0, 0, 0))
                 self.screen.blit(text_surface, (640, 150))
                 if self.question_details is None:
-                    self.question_details = self.Math_spell.make_question()
+                    self.question_details = self.get_question()
                     self.question = self.question_details[0]
                     self.answer_list = self.question_details[1]
                 i = 0
@@ -263,18 +263,25 @@ class battle:
 
     def get_question(self):
         global active_spell
-        selection = 0
+        selection = random.randrange(0,4,1)
 
         if selection == 0:
             active_spell = 'math'
 
-            question = self.Math_spell()
+            question = self.Math_spell.make_question()
+
         elif selection == 1:
-            print("true or false")
+            active_spell = 'Spelling'
+
+            question = self.Spelling_spell.make_question()
         elif selection == 2:
-            print("spelling")
+            active_spell = 'guess'
+
+            question = self.guess_spell.make_question()
         else:
-            print("geography")
+            active_spell = 'general'
+
+            question = self.gen_spell.make_question()
 
         return question
 
@@ -310,7 +317,25 @@ class battle:
     def check_answer(self, user_answer):
         global active_spell
 
-        response = self.Math_spell.check_question(user_answer)
+
+        if active_spell == 'math':
+
+
+           response = self.Math_spell.check_question(user_answer)
+
+        elif active_spell == 'Spelling':
+
+            response = self.Spelling_spell.check_Anwser(user_answer)
+
+        elif active_spell == 'guess':
+
+
+            response = self.guess_spell.check_Anwser(user_answer)
+        else:
+            active_spell = 'general'
+
+            response = self.gen_spell.check_Anwser(user_answer)
+
 
         return response
 

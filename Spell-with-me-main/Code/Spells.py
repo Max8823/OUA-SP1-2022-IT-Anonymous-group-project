@@ -99,8 +99,10 @@ class spelling_spell(Spells):
 
         spelling_answers_list = [1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1]
         answer_list = ["Yes", "No"]
-        question = random.randrange(len(spelling_questions_list))
-        self.answer = spelling_answers_list[question]
+        question_num = random.randrange(len(spelling_questions_list))
+        question = spelling_questions_list[question_num]
+
+        self.answer = spelling_answers_list[question_num]
 
         return question, answer_list
 
