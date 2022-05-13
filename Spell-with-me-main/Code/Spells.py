@@ -5,8 +5,9 @@ import math
 
 class Spells:
     def _init_(self):
-        self.answer
-        self.questions = []
+        self.answer = None
+        question = None
+        self.answers_list = [None]
 
     def make_question(self):
         return ''
@@ -34,12 +35,12 @@ class math_spell(Spells):
         }
         self.answers_list = []
         self.num1 = random.randrange(1, len(self.numbers), 1)
-        if self.num1==0:
-            self.num1 +=1
+        if self.num1 == 0:
+            self.num1 += 1
         self.num2 = random.randrange(1, len(self.numbers), 1)
         if self.num2 > self.num1:
             while self.num2 > self.num1:
-                self.num2 -=1
+                self.num2 -= 1
 
         self.use_operator = self.functions[random.randrange(0, len(self.functions), 1)]
 
@@ -66,24 +67,21 @@ class math_spell(Spells):
         random.shuffle(self.answers_list)
         return self.question, self.answers_list
 
-    # if this returns True, do damage, else no damage
-    def check_question(self, user_answer):
+    def check_Anwser(self, player_Answer):
+        if self.answers_list[player_Answer] == self.answer:
 
-        Answer = False
-
-        if self.answers_list[user_answer] == self.answer:
-            Answer = True
-
+            rep = True
         else:
-            Answer = False
 
-        return Answer
+            rep = False
 
-    def set_answer(self, answer):
-        self.answer = answer
+        self.reset_question()
+        return rep
 
-    def get_answer(self):
-        return self.answer
+    def reset_question(self):
+        self.answer = None
+        question = None
+        self.answers_list = [None]
 
 
 class spelling_spell(Spells):
@@ -98,27 +96,36 @@ class spelling_spell(Spells):
                                    "Is the word 'knowlege' spelt correctly?", "Is 'where' a location word?"]
 
         spelling_answers_list = [1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1]
-        answer_list = ["Yes", "No"]
+        self.answers_list = ["Yes", "No"]
         question_num = random.randrange(len(spelling_questions_list))
         question = spelling_questions_list[question_num]
 
         self.answer = spelling_answers_list[question_num]
 
-        return question, answer_list
+        return question, self.answers_list
 
     def check_Anwser(self, player_Answer):
-        if player_Answer == self.answer:
+        if self.answers_list[player_Answer] == self.answer:
 
-            return True
+            rep = True
         else:
 
-            return False
+            rep = False
+
+        self.reset_question()
+        return rep
+
+    def reset_question(self):
+        self.answer = None
+        question = None
+        self.answers_list = [None]
 
 
 class guess_spell(Spells):
     def make_question(self):
         questions_list = ["Guess the word: 'Sleeping ______ and the seven dwarves'?", "Guess the word: 'I hopped out "
-                                                                                      "the shower and dried my self with the _____'?",
+                                                                                      "the shower and dried my self "
+                                                                                      "with the _____'?",
                           "Guess the word: 'I hopped in the car and "
                           "_____ to the shop'", "Guess the word: 'It snows in the ______'?", "Guess the word: 'My dog "
                                                                                              "wears a ______ around it's neck'?",
@@ -128,8 +135,8 @@ class guess_spell(Spells):
                           "Guess the word: 'I got my food out of the ______'?",
                           "Guess the word: 'Walking is too slow, instead I will ___'?", "What word do you live in and "
                                                                                         "rhymes with 'mouse'?", ]
-        answers_list = ["Beauty", "Towel", "Drove", "Winter", "Collar", "Flag", "Beast", "Rainbow", "Fridge", "Run",
-                        "House"]
+        answer_list = ["Beauty", "Towel", "Drove", "Winter", "Collar", "Flag", "Beast", "Rainbow", "Fridge", "Run",
+                       "House"]
 
         filler_list = ["Dog", "Angel", "Tree", "Rock", "Monkey", "Bathtub", "Window", "Sneezed", "Karate Kick", "Cat",
                        "Headphones", "Bottle", "Summer", "Jumper", "Kid", "Hammer", "Spring", "Carpark", "Ninja", "Sun",
@@ -139,19 +146,38 @@ class guess_spell(Spells):
 
         QA_num = random.randrange(len(questions_list))
         question = questions_list[QA_num]
-        self.answer = answers_list[QA_num]
-        answers_list = []
-        answers_list.append(self.answer)
-        while len(answers_list) <= 4:
-            a = random.randrange(0,len(filler_list),1)
-            if a in answers_list:
-                a = random.randrange(0,len(filler_list),1)
-            answers_list.append(a)
+        self.answer = answer_list[QA_num]
+        self.answers_list = []
+        self.answers_list.append(self.answer)
 
-        return question, answers_list
+        while len(self.answers_list) < 4:
+            a = filler_list[random.randrange(0, len(filler_list), 1)]
+            if a in self.answers_list:
+                a = filler_list[random.randrange(0, len(filler_list), 1)]
+            self.answers_list.append(a)
+
+        return question, self.answers_list
+
+    def check_Anwser(self, player_Answer):
+        if self.answers_list[player_Answer] == self.answer:
+
+
+            rep = True
+        else:
+
+            rep = False
+
+        self.reset_question()
+        return rep
+
+    def reset_question(self):
+        self.answer = None
+        question = None
+        self.answers_list = [None]
 
 
 class general_spell(Spells):
+
     def make_question(self):
         questions_list = ["What does an archer shoot out of his bow?", "What is white, scary, and says 'boo' at "
                                                                        "night?",
@@ -165,25 +191,44 @@ class general_spell(Spells):
                           "What language do they speak in France?", "What language do they speak in America?",
                           "What continent is Egypt in?"]
 
-        answers_list = ["Arrows", "Ghost", "Melbourne", "Adelaide", "Quiet", "Money", "Teacher", "Jumper", "Giant",
-                        "French", "English", "Africa"]
+        answer_list = ["Arrows", "Ghost", "Melbourne", "Adelaide", "Quiet", "Money", "Teacher", "Jumper", "Giant",
+                       "French", "English", "Africa"]
 
         filler_list = ["Road", "Truck", "Wax", "Sunglasses", "Swing", "Farted", "Cone", "Chicken", "Dance", "TV",
                        "Hat",
                        "Ear", "Tail", "Slow", "Word", "List", "Maths", "Screen", "Roof", "Sky", "Perth", "Sydney",
                        "Australia", "America", "Europe", "Russia", "Potato", "Onion", "Antartica", "Apple", "German",
                        "Japanese", "Mandarin", "Bus", "George", "Atlantis", "Knife", "Balloon", "London", "Euro",
-                       "Music", "Croatia", "Kim Jun-un", "Vladamir Putin", "Cupboard", "Cloud", "Object", "Air",
-                       "Business", "Trojan Horse"]
+                       "Music", "Croatia", "Jun-un", "Vladamir", "Cupboard", "Cloud", "Object", "Air",
+                       "Business", "Trojan"]
 
         QA_num = random.randrange(0, len(questions_list), 1)
         question = questions_list[QA_num]
-        self.answer = answers_list[QA_num]
-        while len(answers_list) < 4:
+        self.answer = answer_list[QA_num]
+        self.answers_list = []
+        self.answers_list.append(self.answer)
 
-            a = random.randrange(0, len(filler_list), 1)
-            if a in answers_list:
-                a = random.randrange(0, len(filler_list), 1)
-            answers_list.append(a)
+        while len(self.answers_list) < 4:
 
-        return question, answers_list
+            a = filler_list[random.randrange(0, len(filler_list), 1)]
+            if a in self.answers_list:
+                a = filler_list[random.randrange(0, len(filler_list), 1)]
+            self.answers_list.append(a)
+
+        return question, self.answers_list
+
+    def check_Anwser(self, player_Answer):
+        if self.answers_list[player_Answer] == self.answer:
+
+            rep = True
+        else:
+
+            rep = False
+
+        self.reset_question()
+        return rep
+
+    def reset_question(self):
+        self.answer = None
+        question = None
+        self.answers_list = [None]

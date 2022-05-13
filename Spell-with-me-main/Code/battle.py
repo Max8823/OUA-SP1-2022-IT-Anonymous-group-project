@@ -242,7 +242,6 @@ class battle:
     def spell_result(self):
         global current_spell
         if sucessful_cast:
-
             text_surface, rect = font.render(str("sucessfully cast " + str(current_spell)), (0, 0, 0))
             self.screen.blit(text_surface, (640, 200))
             self.screen.blit(self.spells[current_spell]["img"], (640, 250))
@@ -263,7 +262,7 @@ class battle:
 
     def get_question(self):
         global active_spell
-        selection = random.randrange(0,4,1)
+        selection = random.randrange(0, 4, 1)
 
         if selection == 0:
             active_spell = 'math'
@@ -292,22 +291,23 @@ class battle:
         spell_no = None
         spell_name = None
 
-        spell_no = random.randrange(0, len(enemy_spells_tmp),1)
+        spell_no = random.randrange(0, len(enemy_spells_tmp), 1)
         enemy_spells = []
         print(enemy_spells_tmp)
         for enemy_spell in enemy_spells_tmp:
             enemy_spells.append(enemy_spell)
-        i=0
+        i = 0
         for enemy_spell in enemy_spells_tmp:
             if spell_no == enemy_spells_tmp[enemy_spell]["spell_id"]:
                 spell_name = enemy_spells[i]
             else:
-                i+=1
+                i += 1
 
         dmg = random.randrange(0, enemy_spells_tmp[spell_name]["damage"], 1)
         player.set_player_health(dmg)
 
-        text_surface, rect = font.render(str(enemy.get_enemy_name()+" used " + spell_name + " and did " + str(dmg) + " damage"), (0, 0, 0))
+        text_surface, rect = font.render(
+            str(enemy.get_enemy_name() + " used " + spell_name + " and did " + str(dmg) + " damage"), (0, 0, 0))
         self.screen.blit(text_surface, (640, 200))
         self.update()
         self.wait()
@@ -317,11 +317,9 @@ class battle:
     def check_answer(self, user_answer):
         global active_spell
 
-
         if active_spell == 'math':
 
-
-           response = self.Math_spell.check_question(user_answer)
+            response = self.Math_spell.check_Anwser(user_answer)
 
         elif active_spell == 'Spelling':
 
@@ -329,13 +327,11 @@ class battle:
 
         elif active_spell == 'guess':
 
-
             response = self.guess_spell.check_Anwser(user_answer)
         else:
             active_spell = 'general'
 
             response = self.gen_spell.check_Anwser(user_answer)
-
 
         return response
 
