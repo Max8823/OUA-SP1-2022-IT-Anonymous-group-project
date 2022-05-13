@@ -18,6 +18,11 @@ class Spells:
 # making a math spell
 class math_spell(Spells):
     def __init__(self):
+
+        self.make_question()
+
+    def make_question(self):
+
         self.numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         self.functions = ["+", "-", "*", "/"]
         self.num1 = None
@@ -27,13 +32,15 @@ class math_spell(Spells):
             '*': lambda a, b: a * b,
             '/': lambda a, b: a / b,
         }
-        self.make_question()
-
-    def make_question(self):
-
         self.answers_list = []
         self.num1 = random.randrange(1, len(self.numbers), 1)
+        if self.num1==0:
+            self.num1 +=1
         self.num2 = random.randrange(1, len(self.numbers), 1)
+        if self.num2 > self.num1:
+            while self.num2 > self.num1:
+                self.num2 -=1
+
         self.use_operator = self.functions[random.randrange(0, len(self.functions), 1)]
 
         self.answer = math.floor(self.operator_functions[self.use_operator](self.num1, self.num2))

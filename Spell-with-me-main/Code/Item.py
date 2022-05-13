@@ -120,6 +120,9 @@ class Item:
     def get_item_count(self):
         return self.item_count
 
+    def get_mag_pwr(self):
+        return self.info["magic_pwr"]
+
     def get_item_name(self):
         return self.info["item_name"]
 

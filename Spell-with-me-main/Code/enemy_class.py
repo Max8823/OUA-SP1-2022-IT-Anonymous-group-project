@@ -2,6 +2,8 @@ import pygame
 import random
 
 
+
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, enemy_code, map_code, pos, groups, obstacle_sprites):
         super().__init__(groups)
@@ -13,6 +15,7 @@ class Enemy(pygame.sprite.Sprite):
         self.enemy_code = int(enemy_code)
         self.map_code = map_code
         self.enemy_pos = pos
+        self.battle = False
 
         ##################################################################################
         # need to change these values later once we have enemies done
@@ -21,7 +24,7 @@ class Enemy(pygame.sprite.Sprite):
         if self.enemy_code == 0:
 
             if map_code == 0:
-                self.enemy_name = "frog"
+                self.enemy_name = "evil frog"
                 self.enemy_health = 150
                 self.image = pygame.image.load('../graphics/enemies/frog.png').convert_alpha()
                 self.rect = self.image.get_rect(center=self.enemy_pos)
@@ -31,6 +34,8 @@ class Enemy(pygame.sprite.Sprite):
                     "Roll": {"spell_id": 2, "damage": 150, "img": '..'},
                 }
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+                self.set_health_stats(self.enemy_health, self.enemy_health)
+
 
             elif map_code == 1:
                 self.enemy_name = "rat"
@@ -43,6 +48,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Scratch": {"spell_id": 2, "damage": 150, "img": '..'},
                 }
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+                self.set_health_stats(self.enemy_health, self.enemy_health)
 
             else:
                 self.enemy_name = "bat"
@@ -56,6 +62,7 @@ class Enemy(pygame.sprite.Sprite):
                 }
 
             self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+            self.set_health_stats(self.enemy_health, self.enemy_health)
 
 
         elif self.enemy_code == 1:
@@ -70,6 +77,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Ferocious bite": {"spell_id": 2, "damage": 250, "img": '..'},
                 }
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+                self.set_health_stats(self.enemy_health, self.enemy_health)
 
             elif map_code == 1:
                 self.enemy_name = "Zombie"
@@ -82,6 +90,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Bite": {"spell_id": 2, "damage": 250, "img": '..'},
                 }
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+                self.set_health_stats(self.enemy_health, self.enemy_health)
 
             else:
                 self.enemy_name = "Ghost"
@@ -94,7 +103,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Curse": {"spell_id": 2, "damage": 275, "img": '..'},
                 }
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
-
+                self.set_health_stats(self.enemy_health, self.enemy_health)
 
         elif self.enemy_code == 2:
             if map_code == 0:
@@ -111,6 +120,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Terrify": {"spell_id": 3, "damage": 300, "img": '..'}
                 }
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+                self.set_health_stats(self.enemy_health, self.enemy_health)
 
             elif map_code == 1:
                 self.enemy_name = "grim reaper"
@@ -126,6 +136,7 @@ class Enemy(pygame.sprite.Sprite):
                     "Horrify": {"spell_id": 3, "damage": 350, "img": '..'}
                 }
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+                self.set_health_stats(self.enemy_health, self.enemy_health)
 
             else:
                 self.enemy_name = "Knight"
@@ -142,23 +153,37 @@ class Enemy(pygame.sprite.Sprite):
                 }
 
                 self.enemy_loot = {"item_code": self.get_item_code(), "qty": self.get_qty(1, 3)}
+                self.set_health_stats(self.enemy_health, self.enemy_health)
 
     def draw_enemy_health(self):
-        if self.player_current_health < self.player_target_health:
-            self.player_current_health += self.change_speed
 
-        if self.player_current_health > self.player_target_health:
-            self.player_current_health -= self.change_speed
+        if self.battle:
+            self.enemy_health = self.get_enemy_health()
 
-        health_bar_width = int(self.player_current_health / self.health_ratio)
-        health_bar = pygame.Rect(10, 45, health_bar_width, 25)
-        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), health_bar)
+            if self.enemy_health > self.enemy_target_health:
+                self.enemy_health -= self.change_speed
 
+            health_bar_width = int(self.enemy_health / self.health_ratio)
+            health_bar = pygame.Rect(800, 45, health_bar_width, 25)
+            pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), health_bar)
+            pygame.display.get_surface().blit(self.image, (800+health_bar_width, 35))
+
+    def set_enemy_health(self, damage):
+        print("A")
+        self.enemy_health -= damage
+
+    def get_enemy_health(self):
+        return self.enemy_health
+
+    def set_health_stats(self, enemy_health, enemy_target_health):
+        self.enemy_health = enemy_health
+        self.health_bar_length = 400
+        self.enemy_target_health = enemy_target_health
+        self.health_ratio = self.enemy_health / self.health_bar_length
+        self.change_speed = 1
 
     def get_loot(self):
-
-
-        if int(self.enemy_loot["item_code"]) in (4,5,6,7):
+        if int(self.enemy_loot["item_code"]) in (4, 5, 6, 7):
 
             loot = int(self.enemy_loot["item_code"]), 1
         else:
@@ -166,6 +191,11 @@ class Enemy(pygame.sprite.Sprite):
 
         return loot
 
+    def set_battle(self, status):
+        self.battle = status
+
+    def get_battle(self):
+        return self.battle
 
     def get_item_code(self):
         item_code = random.randrange(0, 9)
@@ -178,11 +208,8 @@ class Enemy(pygame.sprite.Sprite):
     def get_enemy_name(self):
         return self.enemy_name
 
-    def get_enemy_health(self):
-        return self.enemy_health
-
-    def set_enemy_health(self, value):
-        self.health = value
+    def get_enemy_spells(self):
+        return self.enemy_spells
 
     def enemy_cast_spell(self, spell):
         return self.enemy_spells[spell]
@@ -194,4 +221,7 @@ class Enemy(pygame.sprite.Sprite):
         return self.enemy_pos
 
     def set_enemy_pos(self):
-        self.enemy_pos = (0,0)
+        self.enemy_pos = (0, 0)
+
+    def update(self):
+        self.draw_enemy_health()

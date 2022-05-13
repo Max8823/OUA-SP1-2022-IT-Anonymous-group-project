@@ -56,22 +56,32 @@ class Player(pygame.sprite.Sprite):
         self.change_speed = 1
 
 
-
-        question_num = random.randrange(0, 5)
-
-
-
     def draw_player_health(self):
-        if self.player_current_health < self.player_target_health:
-            self.player_current_health += self.change_speed
+        if self.inBattle:
 
-        if self.player_current_health > self.player_target_health:
-            self.player_current_health -= self.change_speed
+            if self.player_current_health > self.player_target_health:
+                self.player_current_health -= self.change_speed
 
-        health_bar_width = int(self.player_current_health / self.health_ratio)
-        health_bar = pygame.Rect(10, 45, health_bar_width, 25)
-        #add text - number
-        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), health_bar)
+            health_bar_width = int(self.player_current_health / self.health_ratio)
+            health_bar = pygame.Rect(100, 45, health_bar_width, 25)
+
+            pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), health_bar)
+            pygame.display.get_surface().blit(pygame.image.load('../graphics/player/down/down0.png').convert_alpha(), (25, 35))
+
+    def set_player_health(self, damage):
+        self.player_current_health -= damage
+
+        # healing the player - used when using the 'hp potion' item
+    def heal_player(self, healing):
+        if self.player_current_health and self.player_target_health != self.player_max_health:
+            self.player_target_health += healing
+
+        # increasing the maximum health for the player by 100 - used when using the 'health boost' item
+    def increase_max_health(self):
+        self.player_max_health += 100
+
+    def get_current_health(self):
+        return self.player_current_health
 
 
 #used when gaining items from kills and chests, will check what spells are learnt
@@ -93,22 +103,8 @@ class Player(pygame.sprite.Sprite):
     def update_spell(self, spell_name, value):
         self.player_spells[spell_name]["learnt"] = value
 
-
-    def set_player_health(self, damage):
-        self.player_current_health -= damage
-
-#healing the player - used when using the 'hp potion' item
-    def heal_player(self, healing):
-        if self.player_current_health and self.player_target_health != self.player_max_health:
-            self.player_target_health += healing
-
-# increasing the maximum health for the player by 100 - used when using the 'health boost' item
-    def increase_max_health(self):
-        self.player_max_health += 100
-
-    def get_current_health(self):
-        return self.player_current_health
-
+    def set_battle(self,status):
+        self.inBattle = status
 
 #loading the player animations
     def load_player_animations(self):
@@ -223,8 +219,6 @@ class Player(pygame.sprite.Sprite):
                     # used if moving up to mark collision
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
-
-
 
     # updating user input
     def update(self):

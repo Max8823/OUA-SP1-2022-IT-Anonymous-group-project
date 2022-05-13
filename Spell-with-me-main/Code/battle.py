@@ -2,6 +2,8 @@ import pygame
 from player import *
 from enemy_class import *
 import Spells
+from Item import Item
+from Inventory import Inventory
 
 font = pygame.freetype.Font(pygame.font.match_font("calibiri"), 26)
 
@@ -14,6 +16,7 @@ active_spell = None
 sucessful_cast = None
 answer = None
 current_spell = None
+
 spell_pos = []
 spells = []
 answer_list = []
@@ -44,6 +47,9 @@ class battle:
 
         self.spells = []
 
+        self.inventory = Inventory()
+        self.item = Item
+
         self.screen = pygame.display.get_surface()
 
     def set_battle(self, player1, enemy1, map_num):
@@ -52,20 +58,26 @@ class battle:
         player = player1
         enemy = enemy1
         map_code = map_num
+        enemy.set_battle(True)
+        enemy.draw_enemy_health()
+        player.set_battle(True)
+
+        pygame.display.update()
 
     def set_battle_status(self, status):
         global battle_status
+
         battle_status = status
 
     def get_battle_status(self):
         global battle_status
+
         return battle_status
 
     def end_battle(self):
-        global active_spell, sucessful_cast, answer, answer_list, spell_pos, spells, current_spell
+        global active_spell, sucessful_cast, answer, answer_list, spell_pos, spells, current_spell, turn
         global battle_status
 
-        battle_status = False
         self.question_details = None
         self.question = None
         self.answer_list = [None]
@@ -77,10 +89,14 @@ class battle:
         spell_pos = []
         spells = []
         answer_list = []
+        turn = 'player'
 
         self.set_battle_loot(enemy.get_loot())
         pygame.sprite.Sprite.kill(enemy)
 
+        enemy.set_battle(False)
+        player.set_battle(False)
+        battle_status = False
         self.set_result(True)
 
         # will shove enemy to 0:0
@@ -104,6 +120,7 @@ class battle:
         self.result = result
 
     def reset_question(self):
+        global active_spell, sucessful_cast, answer, answer_list, spell_pos, spells, current_spell
         self.question_details = None
         self.question = None
         self.answer_list = [None]
@@ -133,18 +150,10 @@ class battle:
         self.screen.blit(self.inven_button, (20, 300))
         self.screen.blit(self.battle_ui_buttom, (5, 480))
 
-        if sucessful_cast:
-            text_surface, rect = font.render(str("sucessfully cast " + str(current_spell)), (0, 0, 0))
-            self.screen.blit(text_surface, (250, 200))
-
-        if not sucessful_cast:
-            if sucessful_cast is None:
-                ""
-            else:
-                text_surface, rect = font.render(str("Failed to cast " + str(current_spell)), (0, 0, 0))
-                self.screen.blit(text_surface, (250, 200))
-
         if turn == 'player':
+            text_surface, rect = font.render(str("Player Turn"), (0, 0, 0))
+            self.screen.blit(text_surface, (640, 100))
+
             if not current_spell:
                 self.spells = player.get_player_spells()
                 i = 0
@@ -157,6 +166,8 @@ class battle:
                         self.spell_x += 108
 
             else:
+                text_surface, rect = font.render(str("Casting " + str(current_spell)), (0, 0, 0))
+                self.screen.blit(text_surface, (640, 150))
                 if self.question_details is None:
                     self.question_details = self.Math_spell.make_question()
                     self.question = self.question_details[0]
@@ -179,37 +190,76 @@ class battle:
                     self.x += 150
             self.player_turn()
 
+        else:
+            text_surface, rect = font.render(str("Enemy Turn"), (0, 0, 0))
+            self.screen.blit(text_surface, (640, 100))
+            self.enemy_turn()
+
     def player_turn(self):
-        global sucessful_cast, answer, current_spell
+        global sucessful_cast, answer, current_spell, turn
         result = None
 
         if pygame.mouse.get_pressed()[0]:
             mouse_pos = pygame.mouse.get_pos()
             if current_spell is not None:
                 user_choice = self.get_user_selection(mouse_pos, 0)
-
                 if user_choice is not None:
                     result = self.check_answer(user_choice)
                     if result:
                         sucessful_cast = True
+                        self.spell_result()
+                        self.attack()
                         self.reset_question()
+                        self.wait()
+                        turn = 'enemy'
                     else:
                         sucessful_cast = False
+                        self.spell_result()
                         self.reset_question()
-
-                self.enemy_turn()
+                        self.wait()
+                        turn = 'enemy'
 
             elif current_spell is None:
                 user_choice = self.get_user_selection(mouse_pos, 1)
-                print(user_choice)
                 spells_tmp = player.get_player_spells()
-                print(spells_tmp)
 
                 for spell in spells_tmp:
                     if spells_tmp[spell]["learnt"]:
                         spells.append(spell)
 
                 current_spell = spells[user_choice]
+
+    def attack(self):
+        global current_spell
+
+        spells_tmp = player.get_player_spells()
+
+        if current_spell in spells_tmp:
+            damage = int(spells_tmp[current_spell]["damage"])
+            enemy.set_enemy_health(damage)
+            self.update()
+
+    def spell_result(self):
+        global current_spell
+        if sucessful_cast:
+
+            text_surface, rect = font.render(str("sucessfully cast " + str(current_spell)), (0, 0, 0))
+            self.screen.blit(text_surface, (640, 200))
+            self.screen.blit(self.spells[current_spell]["img"], (640, 250))
+
+        if not sucessful_cast:
+            if sucessful_cast is None:
+                ""
+            else:
+                text_surface, rect = font.render(str("Failed to cast " + str(current_spell)), (0, 0, 0))
+                self.screen.blit(text_surface, (640, 200))
+                self.screen.blit(self.spells[current_spell]["img"], (640, 250))
+
+        self.update()
+
+    def update(self):
+        pygame.display.flip()
+        pygame.display.update()
 
     def get_question(self):
         global active_spell
@@ -229,12 +279,36 @@ class battle:
         return question
 
     def enemy_turn(self):
-        print("AAA")
+        global turn
+
+        enemy_spells_tmp = enemy.get_enemy_spells()
+        spell_no = None
+        spell_name = None
+
+        spell_no = random.randrange(0, len(enemy_spells_tmp),1)
+        enemy_spells = []
+        print(enemy_spells_tmp)
+        for enemy_spell in enemy_spells_tmp:
+            enemy_spells.append(enemy_spell)
+        i=0
+        for enemy_spell in enemy_spells_tmp:
+            if spell_no == enemy_spells_tmp[enemy_spell]["spell_id"]:
+                spell_name = enemy_spells[i]
+            else:
+                i+=1
+
+        dmg = random.randrange(0, enemy_spells_tmp[spell_name]["damage"], 1)
+        player.set_player_health(dmg)
+
+        text_surface, rect = font.render(str(enemy.get_enemy_name()+" used " + spell_name + " and did " + str(dmg) + " damage"), (0, 0, 0))
+        self.screen.blit(text_surface, (640, 200))
+        self.update()
+        self.wait()
+
+        turn = 'player'
 
     def check_answer(self, user_answer):
         global active_spell
-
-
 
         response = self.Math_spell.check_question(user_answer)
 
@@ -245,9 +319,11 @@ class battle:
         if type == 0:
 
             answers_pos = self.get_answer_pos()
+            dist = 30
         else:
 
             answers_pos = self.get_spell_pos()
+            dist = 126
 
         i = 0
         match = None
@@ -256,8 +332,8 @@ class battle:
             item_pos_x = answers_pos[i][0]
             item_pos_y = answers_pos[i][1]
 
-            if abs((((((item_pos_x + 126) - item_pos_x) / 2) + item_pos_x) - mouse_pos[0])) <= 30 and abs(
-                    (((((item_pos_y + 79) - item_pos_y) / 2) + item_pos_y) - mouse_pos[1])) <= 30:
+            if abs((((((item_pos_x + 126) - item_pos_x) / 2) + item_pos_x) - mouse_pos[0])) <= dist and abs(
+                    (((((item_pos_y + 79) - item_pos_y) / 2) + item_pos_y) - mouse_pos[1])) <= dist:
                 match = i
             else:
                 i += 1
@@ -272,6 +348,15 @@ class battle:
         global spell_pos
 
         return spell_pos
+
+    def get_current_spell(self):
+        global current_spell
+
+        return current_spell
+
+    def wait(self):
+        self.update()
+        pygame.time.wait(3000)
 
     def load_img(self):
         self.answer_button = pygame.image.load('../graphics/battle/question_slot.png').convert_alpha()
