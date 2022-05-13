@@ -314,9 +314,12 @@ class user_interactions():
                 print('placeholder')
 
     def get_equipped_display(self, mouse_pos):
-        i = 0
 
+        self.equipped_items_pos = self.Inventory.get_equipped_items_pos()
+        i=0
+        j=0
         for item in self.equipped_items_pos:
+            print(self.equipped_items_pos)
             pos = self.equipped_items_pos[i]
             posx = pos[0]
             posy = pos[1]
@@ -324,13 +327,17 @@ class user_interactions():
             if abs((((((posx + 55) - posx) / 2) + posx) - mouse_pos[0])) <= 30 and abs(
                     (((((posy + 55) - posy) / 2) + posy) - mouse_pos[1])) <= 30:
 
-                self.Inventory.set_target_item(i)
+                print(j)
+                self.Inventory.set_target_item(j)
                 self.Inventory.draw_equip_info()
                 self.Inventory.set_equip_display_up(True)
                 self.set_equip_info(True)
 
             else:
                 i += 1
+                j += 1
+
+
 
     def get_spell_display(self, mouse_pos):
         MatchFound = False

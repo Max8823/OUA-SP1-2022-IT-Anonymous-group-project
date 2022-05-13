@@ -102,10 +102,16 @@ class spelling_spell(Spells):
 
         self.answer = spelling_answers_list[question_num]
 
+
         return question, self.answers_list
 
     def check_Anwser(self, player_Answer):
-        if self.answers_list[player_Answer] == self.answer:
+
+        if player_Answer == "yes":
+            ans = 0
+        else:
+            ans = 1
+        if ans == self.answer:
 
             rep = True
         else:

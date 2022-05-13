@@ -19,7 +19,7 @@ spell_background = pygame.image.load('../graphics/inventory/Spell_box.png')
 equipment_slot = pygame.image.load('../graphics/inventory/equipment_slot.png')
 
 # ITEM DISPLAY
-target_item = 0
+target_item = None
 target_spell = "None"
 slot_counter = 0
 
@@ -94,7 +94,7 @@ class Inventory:
 
                     # displaying the counter or quantity or any given item
                     qty = items_list[i].get_item_count()
-                    text_surface, rect = font.render(str(qty), (0, 0, 0))
+                    text_surface, rect = font.render(str(qty), (0, 255, 0))
                     self.screen.blit(text_surface, (self.item_posX + 5, self.item_posY + 5))
                     self.item_posX += 116
                     self.slot_x += 116
@@ -183,8 +183,9 @@ class Inventory:
             # self.screen.blit(equipped_items[i].get_item_info()["img"], (equipped_pos[i]))
             img1 = equipped_items[i].get_item_img()
             self.screen.blit(img1, (equipped_pos[i][0] + 5, equipped_pos[i][1] + 5))
-
             self.set_equipped_items_pos((equipped_pos[i][0] + 5, equipped_pos[i][1] + 5))
+            i+=1
+
 
     def add_item(self, item_code, qty):
         global slot_counter
@@ -228,7 +229,7 @@ class Inventory:
         global items_list
         global slot_counter
 
-        if currently_equipped <= 3:
+        if currently_equipped <= 2:
 
             idx = items_list.index(target_item)
             item = Item(items_list[idx].get_item_code(), 1, (0, 0))
@@ -250,7 +251,9 @@ class Inventory:
         item = Item(equipped_items[idx].get_item_code(), 1, (0, 0))
         items_list.append(item)
         equipped_items.pop(idx)
-
+        equipped_pos.pop(idx)
+        self.rm_equipped_pos()
+        self.draw_equipment()
         currently_equipped -= 1
         slot_counter += 1
 
@@ -313,10 +316,12 @@ class Inventory:
 
     def set_taregt_spell(self, target):
         global target_spell
+
         target_spell = target
 
     def get_target_spell(self):
         global target_spell
+
         return target_spell
 
     def consume_item(self):
@@ -361,14 +366,23 @@ class Inventory:
 
         return spells_pos
 
+# setting the equipped items_pos
     def set_equipped_items_pos(self, pos):
         global equipped_pos
 
         if currently_equipped <= 2:
-            equipped_pos.append(pos)
+            if len(equipped_pos) != currently_equipped:
+                if pos not in equipped_pos:
+                    equipped_pos.append(pos)
+
+#clears the equipped items positions as it may change
+    def rm_equipped_pos(self):
+        global equipped_pos
+        equipped_pos.clear()
 
     def get_equipped_items_pos(self):
         global equipped_pos
+        print("equipped_pois", equipped_pos)
 
         return equipped_pos
 
@@ -470,7 +484,8 @@ class Inventory:
     def draw_equip_info(self):
         global target_item
         i = target_item
-
+        print(i)
+        print(target_item)
         if equipped_items:
 
             if i is not None:
