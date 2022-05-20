@@ -48,8 +48,9 @@ class Level:
         # creating the map
 
     def start_screen(self):
-        if not self.loaded_img:
-            self.load_start_screen_img()
+
+
+        self.load_start_screen_img()
 
         background_rect = self.start_background.get_rect()
         self.display_surface.blit(self.start_background, background_rect)
@@ -68,7 +69,6 @@ class Level:
 
         if pygame.mouse.get_pressed()[0]:
             pygame.event.clear(pygame.mouse.get_pressed())
-
             mouse_pos = pygame.mouse.get_pos()
 
             if play_button_rect.collidepoint(mouse_pos):
@@ -79,7 +79,7 @@ class Level:
 
 
             elif instructions_rect.collidepoint(mouse_pos):
-                print("instructions")
+                ''
 
             elif quit_rect.collidepoint(mouse_pos):
                 quit()
@@ -94,6 +94,7 @@ class Level:
 
     def load_map(self, map_code):
         global map_loaded
+
         # background here
         self.visible_sprites.set_map(map_code)
         map_objects = {
@@ -140,6 +141,7 @@ class Level:
                             if col == 'p':
 
                                 self.player = Player(x, y, [self.visible_sprites], self.obstacle_sprites)
+
                             else:
                                 self.enemies.append(
                                     Enemy(col, map_code, (x, y), [self.visible_sprites], self.obstacle_sprites))
@@ -151,8 +153,8 @@ class Level:
         #passing map_code to 'user - interactions class'
         self.user_action.set_map_num(map_code)
 
-    def run(self):
 
+    def run(self):
         if not self.play:
             self.start_screen()
 
@@ -164,10 +166,24 @@ class Level:
             self.user_action.key_pressed(self.keys)
             self.user_action.set_offset(self.visible_sprites.get_offset())
 
+            if not self.user_action.get_battle_result():
+                self.player_died()
+
 
             if not self.user_action.get_loaded():
                 self.user_action.set_loaded(True)
 
+    def player_died(self):
+        global map_loaded
+        map_loaded = False
+        self.play = False
+        self.loaded_img = False
+        self.play = False
+        self.loaded = False
+        self.user_action.reset_all()
+        pygame.sprite.Sprite.kill(self.player)
+
+        self.run()
 
 # this is for the adjusting of the screen how the camera follows it around
 class Camera(pygame.sprite.Group):

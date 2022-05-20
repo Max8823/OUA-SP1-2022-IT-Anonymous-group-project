@@ -169,7 +169,7 @@ class Enemy(pygame.sprite.Sprite):
             pygame.display.get_surface().blit(self.image, (800+health_bar_width, 35))
 
     def set_enemy_health(self, damage):
-        print("A")
+
         self.enemy_health -= damage
 
     def get_enemy_health(self):

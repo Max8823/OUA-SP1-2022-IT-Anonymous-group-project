@@ -98,7 +98,6 @@ class Inventory:
                     self.screen.blit(text_surface, (self.item_posX + 5, self.item_posY + 5))
                     self.item_posX += 116
                     self.slot_x += 116
-
                     i += 1
 
                 else:
@@ -215,7 +214,7 @@ class Inventory:
 
             else:
                 if slot_counter == 8:
-                    print("inventory is full")
+                    ""
 
     def full_inventory(self):
 
@@ -239,7 +238,7 @@ class Inventory:
             slot_counter -= 1
 
         else:
-            print("all equipment slots full")
+            ""
 
     def remove_equipped_item(self, target_item):
         global equipped_items
@@ -382,7 +381,7 @@ class Inventory:
 
     def get_equipped_items_pos(self):
         global equipped_pos
-        print("equipped_pois", equipped_pos)
+
 
         return equipped_pos
 
@@ -484,8 +483,6 @@ class Inventory:
     def draw_equip_info(self):
         global target_item
         i = target_item
-        print(i)
-        print(target_item)
         if equipped_items:
 
             if i is not None:
@@ -588,3 +585,38 @@ class Inventory:
         self.item_display_unequip.set_alpha(225)
 
         #
+    def reset_inven(self):
+        global target_item, target_spell,   slot_counter, items_list, equipped_items, currently_equipped, equipped_pos, spells, spells_pos
+        # ITEM DISPLAY
+        target_item = None
+        target_spell = "None"
+        slot_counter = 0
+
+        items_list = []
+        equipped_items = []
+        currently_equipped = 0
+        equipped_pos = []
+        spells = {}
+        spells_pos = []
+
+        self.item = Item
+
+        # number of rows, columns in the inventory
+        self.rows = 3
+        self.col = 3
+
+        # following dimensions are for building and displaying the inventory and items slots
+        self.slot_x = 64
+        self.slot_y = 64
+        self.border = 3
+        self.slot_counter = 1
+
+        # target item used to bring up additional item info
+        self.target_item = 0
+
+        self.screen = pygame.display.get_surface()
+        self.load_img()
+        self.inventory_full = False
+        self.item_display_up = False
+        self.spell_display_up = False
+        self.equip_display_up = False

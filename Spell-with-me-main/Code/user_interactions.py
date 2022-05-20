@@ -31,6 +31,9 @@ class user_interactions():
         self.map_num = None
         self.spells_pos = self.Inventory.get_spell_pos()
         self.equipped_items_pos = self.Inventory.get_equipped_items_pos()
+        self.battle_result = True
+
+        self.battle.set_result(True)
 
     # used to pull chests into this class, preventing circular import
     def set_chest_list(self, chests):
@@ -40,6 +43,10 @@ class user_interactions():
     # used to load player into this class, preventing circular import
     def set_player(self, player):
         self.player = player
+        self.Inventory.add_item(0, 2)
+        self.set_items(self.Inventory.get_items_list())
+        self.update_inventory()
+
 
     # used to pull items list from inventory when a change occurs back there
     def set_items(self, items_list):
@@ -89,7 +96,6 @@ class user_interactions():
     def get_map_num(self):
         return self.map_num
 
-
     def key_pressed(self, key):
 
         # open invenventory
@@ -99,9 +105,10 @@ class user_interactions():
             # this is a testing method, used for cancelling combat
             if key[pygame.K_p]:
                 self.wait()
-                self.battle.end_battle()
+                self.battle.end_battle(True)
                 self.in_battle = False
                 self.Inventory.add_item(self.battle.get_battle_loot()[0], self.battle.get_battle_loot()[1])
+
                 self.set_items(self.Inventory.get_items_list())
 
             if not self.inventory_open:
@@ -139,6 +146,14 @@ class user_interactions():
                     self.Inventory.set_item_display_up(False)
                     self.set_item_info(False)
 
+            if self.in_battle:
+                if pygame.mouse.get_pressed()[0]:
+                    mouse_pos = pygame.mouse.get_pos()
+                    self.check_exit(mouse_pos)
+                    self.check_potions(mouse_pos)
+
+
+
             if not self.in_battle:
                 # movement keys
                 if key[pygame.K_w] or key[pygame.K_UP]:
@@ -170,6 +185,12 @@ class user_interactions():
 
                 else:
                     self.player.set_player_direction_x(0)
+            else:
+                battle_status = self.battle.get_battle_status()
+                if not battle_status:
+                    self.in_battle = False
+                    self.battle.set_battle_status(False)
+                    self.set_battle_status(self.battle.get_result())
 
             # if the player isn't in combat and not in battle, check for chests, can add other methods for doors, ect
 
@@ -180,6 +201,19 @@ class user_interactions():
             if pygame.mouse.get_pressed()[2]:
                 mouse_pos = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
                 self.check_mouse_click_right(mouse_pos)
+
+    def set_battle_status(self, result_of_battle):
+        self.battle_result = result_of_battle
+
+    def get_battle_result(self):
+
+        return self.battle_result
+
+    def reset_all(self):
+        self.set_battle_status(True)
+        self.player.reset_player()
+        self.Inventory.reset_inven()
+
 
     def check_mouse_click_left(self, mouse_pos):
 
@@ -199,7 +233,6 @@ class user_interactions():
                 self.Inventory.set_equip_display_up(False)
                 self.camera.set_equip_info_status(False)
                 self.Inventory.remove_equipped_item(self.equipped_items[self.Inventory.get_target_item()])
-
                 self.update_inventory()
 
 
@@ -258,7 +291,6 @@ class user_interactions():
                 else:
                     self.get_equipped_display(mouse_pos)
 
-
     def check_for_enemies(self):
 
         i = 0
@@ -270,27 +302,55 @@ class user_interactions():
                 self.battle.set_battle(self.player, self.enemies[i], self.get_map_num())
                 self.in_battle = True
                 self.battle.set_battle_status(True)
-
-                if not self.in_battle:
-
-                    if self.battle.get_result():
-
-                        self.battle.end_battle()
-                        self.in_battle = False
-                        self.Inventory.add_item(self.battle.get_battle_loot()[0], self.battle.get_battle_loot()[1])
-                        self.set_items(self.Inventory.get_items_list())
-
-                    else:
-                        pygame.sprite.Sprite.kill(self.player)
+                self.match = True
 
             else:
-                i += 1
-                self.in_battle = False
+                i+=1
+
+
+    def check_exit(self, mouse_pos):
+
+        i = 0
+        item_pos_x = 20
+        item_pos_y = 500
+
+        if abs((((((item_pos_x + 150) - item_pos_x) / 2) + item_pos_x) - mouse_pos[0])) <= 50 and abs(
+                (((((item_pos_y + 100) - item_pos_y) / 2) + item_pos_y) - mouse_pos[1])) <= 75:
+
+            self.battle.end_battle(True)
+            self.in_battle = False
+            self.battle.set_battle_status(False)
+            self.battle.set_turn()
+
+        else:
+               ''
+    def check_potions(self, mouse_pos):
+
+        i = 0
+        item_pos_x = 30
+        item_pos_y = 375
+
+        if abs((((((item_pos_x + 55) - item_pos_x) / 2) + item_pos_x) - mouse_pos[0])) <= 27.5 and abs(
+                (((((item_pos_y + 55) - item_pos_y) / 2) + item_pos_y) - mouse_pos[1])) <= 27.5:
+
+            for item in self.items_list:
+
+                if self.items_list[i].get_item_code() == 0:
+                    self.Inventory.set_target_item(i)
+                    self.player.heal_player(100)
+                    self.Inventory.consume_item()
+                    self.update_inventory()
+                else:
+                    i+=1
+        else:
+               ''
+
 
     def change_map_level(self):
 
         if math.floor(dist((sqrt((pow(self.player.get_player_pos()[0] - 0, 2))),
-                            sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))), self.level.Portal.get_position())) <= 32:
+                            sqrt((pow(self.player.get_player_pos()[1] - 0, 2)))),
+                           self.level.Portal.get_position())) <= 32:
 
             if self.get_map == 0:
 
@@ -311,15 +371,14 @@ class user_interactions():
                     self.Inventory.switch_to_original_inven()
 
             else:
-                print('placeholder')
+                ''
 
     def get_equipped_display(self, mouse_pos):
 
         self.equipped_items_pos = self.Inventory.get_equipped_items_pos()
-        i=0
-        j=0
+        i = 0
+        j = 0
         for item in self.equipped_items_pos:
-            print(self.equipped_items_pos)
             pos = self.equipped_items_pos[i]
             posx = pos[0]
             posy = pos[1]
@@ -327,7 +386,6 @@ class user_interactions():
             if abs((((((posx + 55) - posx) / 2) + posx) - mouse_pos[0])) <= 30 and abs(
                     (((((posy + 55) - posy) / 2) + posy) - mouse_pos[1])) <= 30:
 
-                print(j)
                 self.Inventory.set_target_item(j)
                 self.Inventory.draw_equip_info()
                 self.Inventory.set_equip_display_up(True)
@@ -337,8 +395,6 @@ class user_interactions():
                 i += 1
                 j += 1
 
-
-
     def get_spell_display(self, mouse_pos):
         MatchFound = False
         i = 0
@@ -347,8 +403,8 @@ class user_interactions():
             posx = pos[0]
             posy = pos[1]
 
-            if abs((((((posx + 55) - posx) / 2) + posx) - mouse_pos[0])) <= 30 and abs(
-                    (((((posy + 55) - posy) / 2) + posy) - mouse_pos[1])) <= 30:
+            if abs((((((posx + 55) - posx) / 2) + posx) - mouse_pos[0])) <= 55 and abs(
+                    (((((posy + 55) - posy) / 2) + posy) - mouse_pos[1])) <= 55:
 
                 self.Inventory.set_taregt_spell(self.spells_pos[i][1])
                 self.Inventory.draw_spell_info()
@@ -400,6 +456,7 @@ class user_interactions():
                                    self.chests[i].get_chest_pos())) <= 64:
                     self.Inventory.add_item(self.chests[i].get_chest_contents()[0],
                                             self.chests[i].get_chest_contents()[1])
+                    self.Inventory.add_item(0, 2)
 
                     self.set_items(self.Inventory.get_items_list())
 

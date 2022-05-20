@@ -8,6 +8,11 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, groups, obstacle_sprites):
         super().__init__(groups)
 
+        self.x = x
+        self.y = y
+        self.groups = groups
+        self.obstacle_sprites = obstacle_sprites
+
         self.image = pygame.image.load('../graphics/player/down/down0.png').convert_alpha()
 
         # do not change
@@ -23,6 +28,8 @@ class Player(pygame.sprite.Sprite):
         # marks what sprite in animation is being used and how quick they will change
         self.frame_index = 0
         self.animation_speed = 0.10
+        self.start_x = x
+        self.start_y = y
 
         #
         self.questions = {}
@@ -82,7 +89,6 @@ class Player(pygame.sprite.Sprite):
 
     def get_current_health(self):
         return self.player_current_health
-
 
 #used when gaining items from kills and chests, will check what spells are learnt
     def get_player_learned_spells(self):
@@ -158,6 +164,13 @@ class Player(pygame.sprite.Sprite):
         self.pos = self.rect.centerx, self.rect.centery
         return self.pos
 
+    def reset_player_pos(self):
+        print(self.start_x, self.start_y)
+
+        self.rect.centerx = self.start_x
+        self.rect.centery = self.start_y
+
+
 # used for animations
     def set_player_facing(self, facing):
         self.facing = facing
@@ -219,6 +232,35 @@ class Player(pygame.sprite.Sprite):
                     # used if moving up to mark collision
                     if self.direction.y < 0:
                         self.hitbox.top = sprite.hitbox.bottom
+
+    def reset_player(self):
+        self.player_spells = {
+
+            "Fire Blast": {"spell_id": 0, "damage": 100, "learnt": True,
+                           "img": pygame.image.load('../graphics/Spells/fire_blast.png')},
+            "Water Blast": {"spell_id": 1, "damage": 100, "learnt": True,
+                            "img": pygame.image.load('../graphics/Spells/water_blast.png')},
+            "Earth Blast": {"spell_id": 2, "damage": 100, "learnt": True,
+                            "img": pygame.image.load('../graphics/Spells/earth_blast.png')},
+            "Air Blast": {"spell_id": 3, "damage": 100, "learnt": True,
+                          "img": pygame.image.load('../graphics/Spells/air_blast.png')},
+            "Fire Fury": {"spell_id": 4, "damage": 300, "learnt": False,
+                          "img": pygame.image.load('../graphics/Spells/fire_fury.png')},
+            "Water Fury": {"spell_id": 5, "damage": 300, "learnt": False,
+                           "img": pygame.image.load('../graphics/Spells/water_fury.png')},
+            "Earth Fury": {"spell_id": 6, "damage": 300, "learnt": False,
+                           "img": pygame.image.load('../graphics/Spells/earth_fury.png')},
+            "Air Fury": {"spell_id": 7, "damage": 300, "learnt": False,
+                         "img": pygame.image.load('../graphics/Spells/air_fury.png')},
+        }
+
+        ##
+        self.player_current_health = 1000
+        self.player_max_health = 1000
+        self.health_bar_length = 400
+        self.player_target_health = 1000
+        self.health_ratio = self.player_max_health / self.health_bar_length
+        self.change_speed = 1
 
     # updating user input
     def update(self):

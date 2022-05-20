@@ -93,9 +93,9 @@ class spelling_spell(Spells):
                                    "Is the word 'triangle' spelt correctly?", "Does a 'which' cast spells?",
                                    "Does a " "'night' wear armour?",
                                    "Does 'their' describe something belonging to a person?",
-                                   "Is the word 'knowlege' spelt correctly?", "Is 'where' a location word?"]
+                                   "Is the word 'knowledge' spelt correctly?", "Is 'where' a location word?"]
 
-        spelling_answers_list = [1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1]
+        spelling_answers_list = [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1]
         self.answers_list = ["Yes", "No"]
         question_num = random.randrange(len(spelling_questions_list))
         question = spelling_questions_list[question_num]
@@ -115,7 +115,6 @@ class spelling_spell(Spells):
 
             rep = True
         else:
-
             rep = False
 
         self.reset_question()
